@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JANASEVA AI</title>
+  <meta name="description" content="Independent assistant for Kerala government schemes and scholarships - eligibility, documents and application readiness in Malayalam and English.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Malayalam:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}?v={{ asset_version }}" rel="stylesheet">
+</head>
+<body>
+<a class="skip-link" href="#main" data-i18n="skip">Skip to main content</a>
+
+<header class="site-header">
+  <nav class="navbar navbar-expand-lg" aria-label="Main">
+    <div class="container">
+      <a class="brand" href="#home">JANASEVA <span>AI</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="#home" data-i18n="nav.home">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#profile" data-i18n="nav.profile">My Profile</a></li>
+          <li class="nav-item"><a class="nav-link" href="#discover" data-i18n="nav.discover">Discover Schemes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#verify"><span data-i18n="nav.verify">Document Verification</span> <span class="badge rounded-pill text-bg-warning" id="verifyBadge" hidden></span></a></li>
+          <li class="nav-item"><a class="nav-link" href="#dashboard" data-i18n="nav.dashboard">My Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about" data-i18n="nav.about">About</a></li>
+        </ul>
+        <div class="d-flex gap-2 align-items-center">
+          <div class="btn-group" role="group" aria-label="Language">
+            <button type="button" class="btn btn-sm btn-lang" data-lang="en">English</button>
+            <button type="button" class="btn btn-sm btn-lang" data-lang="ml">മലയാളം</button>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-light" id="textSizeBtn" data-i18n-title="textSize" title="Text size">A+</button>
+          <button type="button" class="btn btn-sm btn-accent" id="openChat" data-i18n="nav.assistant">AI Assistant</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <div class="notice" role="note"><div class="container" data-i18n="notice"></div></div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- HOME -->
+  <section id="home" class="page">
+    <div class="hero">
+      <div class="container">
+        <h1 data-i18n="hero.title">Every Benefit. Every Citizen. One Intelligent Assistant.</h1>
+        <p class="lead" data-i18n="hero.subtitle"></p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="#profile" class="btn btn-lg btn-primary-j" data-i18n="hero.find">Find My Benefits</a>
+          <button type="button" class="btn btn-lg btn-outline-j" data-action="open-chat" data-i18n="hero.ask">Ask JANASEVA AI</button>
+        </div>
+      </div>
+    </div>
+    <div class="container py-5">
+      <div class="row g-4" id="featureCards"></div>
+      <h2 class="mt-5 mb-3" id="how" data-i18n="how.title">How It Works</h2>
+      <ol class="steps" id="howSteps"></ol>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profile" class="page" hidden>
+    <div class="container py-4">
+      <h2 data-i18n="profile.title">Tell us about yourself</h2>
+      <p class="muted" data-i18n="profile.why"></p>
+      <form id="profileForm" novalidate>
+        <fieldset class="card-j">
+          <legend data-i18n="profile.basic">About you</legend>
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label" for="f_name" data-i18n="profile.name"></label><input class="form-control" id="f_name" name="name" autocomplete="name"></div>
+            <div class="col-md-2"><label class="form-label" for="f_age" data-i18n="profile.age"></label><input class="form-control" id="f_age" name="age" inputmode="numeric"></div>
+            <div class="col-md-2"><label class="form-label" for="f_state" data-i18n="profile.state"></label><input class="form-control" id="f_state" name="state" value="Kerala"></div>
+            <div class="col-md-2"><label class="form-label" for="f_district" data-i18n="profile.district"></label><input class="form-control" id="f_district" name="district"></div>
+          </div>
+        </fieldset>
+        <fieldset class="card-j">
+          <legend data-i18n="profile.study">Your studies</legend>
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label" for="f_edu" data-i18n="profile.education"></label>
+              <select class="form-select" id="f_edu" name="education_level" data-options="SSLC,HSE,DIPLOMA,UG,PG,MPHIL_PHD"></select></div>
+            <div class="col-md-4"><label class="form-label" for="f_course" data-i18n="profile.course"></label><input class="form-control" id="f_course" name="course" placeholder="B.Tech CSE"></div>
+            <div class="col-md-4"><label class="form-label" for="f_iname" data-i18n="profile.institutionName"></label><input class="form-control" id="f_iname" name="institution_name"></div>
+            <div class="col-md-3"><label class="form-label" for="f_itype" data-i18n="profile.institution"></label>
+              <select class="form-select" id="f_itype" name="institution_type" data-options="government,aided,self_financing"></select></div>
+            <div class="col-md-3"><label class="form-label" for="f_year" data-i18n="profile.year"></label><input class="form-control" id="f_year" name="year_of_study" inputmode="numeric"></div>
+            <div class="col-md-3"><label class="form-label" for="f_mode" data-i18n="profile.mode"></label>
+              <select class="form-select" id="f_mode" name="course_mode" data-options="regular,distance"></select></div>
+            <div class="col-md-3"><label class="form-label" for="f_aicte" data-i18n="profile.aicte"></label>
+              <select class="form-select" id="f_aicte" name="institution_aicte_approved" data-options="yes,no"></select></div>
+            <div class="col-md-6"><label class="form-label" for="f_prev" data-i18n="profile.prevMarks"></label><input class="form-control" id="f_prev" name="previous_exam_percentage" inputmode="decimal"></div>
+            <div class="col-md-6"><label class="form-label" for="f_pct" data-i18n="profile.percentile"></label><input class="form-control" id="f_pct" name="class12_percentile" inputmode="decimal"></div>
+          </div>
+        </fieldset>
+        <fieldset class="card-j">
+          <legend data-i18n="profile.money">Family and finances</legend>
+          <div class="row g-3">
+            <div class="col-md-4"><label class="form-label" for="f_income" data-i18n="profile.income"></label><input class="form-control" id="f_income" name="annual_income" inputmode="numeric"></div>
+            <div class="col-md-4"><label class="form-label" for="f_bpl" data-i18n="profile.bpl"></label>
+              <select class="form-select" id="f_bpl" name="bpl" data-options="yes,no"></select></div>
+            <div class="col-md-4"><label class="form-label" for="f_other" data-i18n="profile.otherSch"></label>
+              <select class="form-select" id="f_other" name="receives_other_scholarship" data-options="no,yes"></select></div>
+          </div>
+        </fieldset>
+        <fieldset class="card-j">
+          <legend data-i18n="profile.optional">Optional details</legend>
+          <p class="muted small" data-i18n="profile.optionalNote"></p>
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="f_consent">
+            <label class="form-check-label" for="f_consent" data-i18n="profile.consent"></label>
+          </div>
+          <div class="row g-3" id="optionalFields" hidden>
+            <div class="col-md-4"><label class="form-label" for="f_gender" data-i18n="profile.gender"></label>
+              <select class="form-select" id="f_gender" name="gender" data-options="female,male,other"></select></div>
+            <div class="col-md-4"><label class="form-label" for="f_comm" data-i18n="profile.community"></label>
+              <select class="form-select" id="f_comm" name="community" data-options="Muslim,Christian,Latin Catholic,Converted Christian,Hindu,Sikh,Buddhist,Jain,Parsi,preferNot"></select></div>
+            <div class="col-md-4"><label class="form-label" for="f_dis" data-i18n="profile.disability"></label><input class="form-control" id="f_dis" name="disability_percent" inputmode="numeric"></div>
+          </div>
+        </fieldset>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <button type="submit" class="btn btn-lg btn-primary-j" data-i18n="profile.save">Save and continue</button>
+          <button type="button" class="btn btn-lg btn-outline-danger" id="clearProfile" data-i18n="profile.clear">Clear profile</button>
+          <span id="profileMsg" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- DISCOVER -->
+  <section id="discover" class="page" hidden>
+    <div class="container py-4">
+      <h2 data-i18n="discover.title">Discover Schemes</h2>
+
+      <div class="card-j best-box">
+        <h3 class="h4" data-i18n="best.title">Best for you</h3>
+        <p class="muted small" data-i18n="best.hint"></p>
+        <div class="mb-3">
+          <span class="me-2 fw-semibold" data-i18n="best.matters"></span>
+          <div class="btn-group flex-wrap" role="group" id="presetGroup">
+            <button type="button" class="btn btn-sm btn-preset active" data-preset="balanced" data-i18n="best.balanced"></button>
+            <button type="button" class="btn btn-sm btn-preset" data-preset="money" data-i18n="best.money"></button>
+            <button type="button" class="btn btn-sm btn-preset" data-preset="easy" data-i18n="best.easy"></button>
+            <button type="button" class="btn btn-sm btn-preset" data-preset="sure" data-i18n="best.sure"></button>
+          </div>
+        </div>
+        <div id="bestList" aria-live="polite"></div>
+      </div>
+
+      <h3 class="h4 mt-4" data-i18n="discover.all">All schemes</h3>
+      <form class="row g-2 mb-3" id="searchForm" role="search">
+        <div class="col-md-6"><label class="visually-hidden" for="q" data-i18n="discover.search"></label>
+          <input class="form-control form-control-lg" id="q" data-i18n-placeholder="discover.search"></div>
+        <div class="col-md-3"><select class="form-select form-select-lg" id="catFilter" aria-label="Category">
+          <option value="" data-i18n="discover.allCats"></option>
+          <option value="scholarship" data-i18n="discover.scholarship"></option>
+          <option value="welfare" data-i18n="discover.welfare"></option></select></div>
+        <div class="col-md-3"><button class="btn btn-lg btn-primary-j w-100" data-i18n="discover.searchBtn">Search</button></div>
+        <div class="col-12 form-check ms-1">
+          <input class="form-check-input" type="checkbox" id="verifiedOnly">
+          <label class="form-check-label" for="verifiedOnly" data-i18n="discover.verifiedOnly"></label>
+        </div>
+      </form>
+      <div class="row g-3" id="schemeList" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- BENEFITIQ -->
+  <section id="benefitiq" class="page" hidden>
+    <div class="container py-4">
+      <h2><span data-i18n="biq.title">BenefitIQ</span></h2>
+      <p class="muted" data-i18n="biq.subtitle"></p>
+      <div id="biqEmpty" class="card-j" data-i18n="biq.pick"></div>
+      <div id="biqBody" hidden>
+        <p class="fs-5"><span data-i18n="biq.forScheme"></span>: <strong id="biqScheme"></strong> <span id="biqBadges"></span></p>
+        <div class="row g-4">
+          <div class="col-lg-6"><div class="card-j h-100"><h3 class="h5" data-i18n="biq.a"></h3><div id="eligBox"></div></div></div>
+          <div class="col-lg-6"><div class="card-j h-100"><h3 class="h5" data-i18n="biq.b"></h3><div id="readyBox"></div></div></div>
+          <div class="col-12"><div class="card-j"><h3 class="h5" data-i18n="biq.c"></h3><p class="mb-0" data-i18n="biq.approval"></p></div></div>
+          <div class="col-lg-6"><div class="card-j h-100" id="docs">
+            <h3 class="h5" data-i18n="docs.checklist">Document checklist</h3>
+            <p class="muted small" data-i18n="docs.tickHint"></p>
+            <div id="docChecklist"></div>
+          </div></div>
+          <div class="col-lg-6"><div class="card-j h-100">
+            <h3 class="h5" data-i18n="docs.upload">Read my income certificate</h3>
+            <p class="muted small" data-i18n="docs.uploadHint"></p>
+            <form id="ocrForm" class="d-flex flex-wrap gap-2">
+              <label class="visually-hidden" for="ocrFile" data-i18n="docs.upload"></label>
+              <input class="form-control" type="file" id="ocrFile" accept="image/png,image/jpeg">
+              <button class="btn btn-primary-j" data-i18n="docs.read">Read document</button>
+            </form>
+            <div id="ocrResult" class="mt-3" aria-live="polite"></div>
+          </div></div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <a href="#apply" class="btn btn-lg btn-primary-j" data-i18n="biq.toApply">Prepare application</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPLY -->
+  <section id="apply" class="page" hidden>
+    <div class="container py-4">
+      <h2 data-i18n="apply.title">Prepare your application</h2>
+      <div id="applyEmpty" class="card-j" data-i18n="biq.pick"></div>
+      <div id="applyBody" hidden>
+        <div class="card-j"><h3 class="h5" data-i18n="apply.instructions"></h3><p id="applyMethod"></p><div id="applyLinks" class="d-flex flex-wrap gap-2"></div></div>
+        <form id="draftForm" class="card-j">
+          <h3 class="h5" data-i18n="apply.fields"></h3>
+          <p class="muted small" data-i18n="apply.fieldsHint"></p>
+          <div class="row g-3" id="draftFields"></div>
+          <div id="draftMissing" class="mt-3"></div>
+          <button class="btn btn-lg btn-primary-j mt-3" id="draftBtn" data-i18n="apply.makeDraft">Create application draft</button>
+        </form>
+        <div class="card-j" id="confirmBox" hidden>
+          <p class="fw-semibold" data-i18n="apply.draftReady"></p>
+          <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="confirmCheck">
+            <label class="form-check-label" for="confirmCheck" data-i18n="apply.confirmCheck"></label></div>
+          <button class="btn btn-lg btn-success" id="confirmBtn" disabled data-i18n="apply.confirm">Confirm (demo)</button>
+          <div id="demoBanner" class="demo-banner mt-3" role="alert" hidden data-i18n="apply.demoDone"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCUMENT VERIFICATION (panchayat workflow) -->
+  <section id="verify" class="page" hidden>
+    <div class="container py-4">
+      <h2 data-i18n="verify.title">Document Verification</h2>
+      <p class="muted" data-i18n="verify.intro"></p>
+      <div id="vNotifications"></div>
+      <div class="card-j" id="vLinkBox"></div>
+      <div id="vLinked" hidden>
+        <form class="card-j" id="vSubmitForm" novalidate>
+          <h3 class="h5" data-i18n="verify.newRequest">Ask your panchayat to verify a document</h3>
+          <div class="row g-3">
+            <div class="col-md-6"><label class="form-label" for="vCat" data-i18n="verify.category"></label><select class="form-select" id="vCat" name="document_category" required></select>
+              <div class="small text-warning-emphasis mt-1" id="vCatNote"></div></div>
+            <div class="col-md-6"><label class="form-label" for="vMember" data-i18n="verify.member"></label><select class="form-select" id="vMember" name="member_ref"></select></div>
+            <div class="col-md-6"><label class="form-label" for="vPurpose" data-i18n="verify.purpose"></label><input class="form-control" id="vPurpose" name="purpose" required></div>
+            <div class="col-md-6"><label class="form-label" for="vScheme" data-i18n="verify.scheme"></label><select class="form-select" id="vScheme" name="scheme_id"></select></div>
+            <div class="col-md-4"><label class="form-label" for="vRef" data-i18n="verify.docRef"></label><input class="form-control" id="vRef" name="doc_reference" maxlength="60"></div>
+            <div class="col-md-4"><label class="form-label" for="vAuth" data-i18n="verify.authority"></label><input class="form-control" id="vAuth" name="issuing_authority" maxlength="100"></div>
+            <div class="col-md-4"><label class="form-label" for="vValid" data-i18n="verify.validUntil"></label><input class="form-control" type="date" id="vValid" name="valid_until"></div>
+            <div class="col-12"><label class="form-label" for="vFile" data-i18n="verify.file"></label><input class="form-control" type="file" id="vFile" name="file" accept="application/pdf,image/png,image/jpeg" required>
+              <div class="small muted" data-i18n="verify.fileHint"></div></div>
+          </div>
+          <div class="d-flex flex-wrap gap-2 align-items-center mt-3">
+            <button class="btn btn-lg btn-primary-j" data-i18n="verify.send">Send to my panchayat</button>
+            <span id="vSubmitMsg" role="status" aria-live="polite"></span>
+          </div>
+        </form>
+        <div class="card-j"><h3 class="h5" data-i18n="verify.myRequests">My verification requests</h3><div id="vRequests" aria-live="polite"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="page" hidden>
+    <div class="container py-4">
+      <h2 data-i18n="dash.title">My Dashboard</h2>
+      <div class="row g-4">
+        <div class="col-lg-6"><div class="card-j h-100"><h3 class="h5" data-i18n="dash.saved"></h3><div id="savedList"></div></div></div>
+        <div class="col-lg-6"><div class="card-j h-100"><h3 class="h5" data-i18n="dash.drafts"></h3><div id="draftList"></div></div></div>
+      </div>
+      <p class="muted small mt-3" data-i18n="dash.reminder"></p>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="page" hidden>
+    <div class="container py-4">
+      <h2 data-i18n="about.title">About and privacy</h2>
+      <div class="card-j"><p data-i18n="about.p1"></p><p data-i18n="about.p2"></p><p class="mb-0" data-i18n="about.p3"></p></div>
+    </div>
+  </section>
+</main>
+
+<!-- Scheme details dialog -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+    <div class="modal-header"><h2 class="modal-title h4" id="detailTitle"></h2>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="detail.close">Close</button></div>
+  </div></div>
+</div>
+
+<!-- Chat panel -->
+<div class="offcanvas offcanvas-end chat-panel" tabindex="-1" id="chatPanel" aria-labelledby="chatTitle">
+  <div class="offcanvas-header">
+    <h2 class="offcanvas-title h5" id="chatTitle" data-i18n="chat.title">JANASEVA AI Assistant</h2>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column p-0">
+    <div id="chatLog" class="chat-log" aria-live="polite"><p class="muted small p-3" data-i18n="chat.examples"></p></div>
+    <form id="chatForm" class="chat-input">
+      <div class="form-check form-switch small mb-2">
+        <input class="form-check-input" type="checkbox" id="readAloud">
+        <label class="form-check-label" for="readAloud" data-i18n="chat.readAloud"></label>
+      </div>
+      <div class="d-flex gap-2">
+        <label class="visually-hidden" for="chatText" data-i18n="chat.placeholder"></label>
+        <input class="form-control" id="chatText" autocomplete="off" data-i18n-placeholder="chat.placeholder">
+        <button type="button" class="btn btn-outline-j" id="micBtn" data-i18n-title="chat.mic" title="Speak" aria-label="Speak">🎤</button>
+        <button class="btn btn-primary-j" data-i18n="chat.send">Send</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    <p data-i18n="notice"></p>
+    <p class="mb-1"><a href="#about" data-i18n="about.title"></a> · <span data-i18n="footer.contact"></span></p>
+    <p class="mb-0" data-i18n="footer.project"></p>
+  </div>
+</footer>
+
+<div class="toast-holder" aria-live="polite"><div id="toast" class="toast-j" hidden></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/api.js') }}?v={{ asset_version }}"></script>
+<script src="{{ url_for('static', filename='js/i18n.js') }}?v={{ asset_version }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}?v={{ asset_version }}"></script>
+</body>
+</html>

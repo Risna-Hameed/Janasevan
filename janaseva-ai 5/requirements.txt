@@ -1,0 +1,7 @@
+flask>=3.0
+requests>=2.31
+pillow>=10.0
+reportlab>=4.0
+pytesseract>=0.3.10
+python-dotenv>=1.0
+gunicorn>=22.0

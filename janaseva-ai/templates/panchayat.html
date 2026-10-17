@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panchayat Dashboard · JANASEVA AI</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/panchayat.css') }}?v={{ asset_version }}" rel="stylesheet">
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to main content</a>
+
+<!-- SIGN-IN -->
+<section id="loginView" class="login-wrap" hidden>
+  <div class="login-card">
+    <div class="login-brand"><span class="emblem" aria-hidden="true">▣</span> JANASEVA AI <small>Panchayat Dashboard</small></div>
+    <h1 class="h4">Official sign-in</h1>
+    <form id="loginForm" novalidate>
+      <label class="form-label" for="lgUser">Username</label>
+      <input class="form-control mb-3" id="lgUser" autocomplete="username" required>
+      <label class="form-label" for="lgPass">Password</label>
+      <input class="form-control mb-3" id="lgPass" type="password" autocomplete="current-password" required>
+      <button class="btn btn-pj w-100" id="lgBtn">Sign in</button>
+      <div id="lgError" class="alert alert-danger mt-3 mb-0" role="alert" hidden></div>
+    </form>
+    <details class="demo-accounts mt-4">
+      <summary>Demonstration accounts (fictional panchayats)</summary>
+      <p class="small mb-2">Password for every demo account: <code>Demo@2026pass</code>. These accounts are for the prototype only and are not government credentials.</p>
+      <ul class="small mb-0">
+        <li><code>thanal.admin</code> – Panchayat Administrator</li>
+        <li><code>thanal.officer</code> – Verification Officer (all wards)</li>
+        <li><code>thanal.ward2</code> – Verification Officer (ward 2 only)</li>
+        <li><code>thanal.entry</code> – Survey Data Entry Operator</li>
+        <li><code>thanal.viewer</code> – Read-Only Official</li>
+        <li><code>nila.officer</code> – Verification Officer, another panchayat</li>
+        <li><code>puzha.admin</code> – panchayat with a suspended licence</li>
+      </ul>
+    </details>
+    <p class="small text-muted mt-3 mb-0"><a href="/">← Citizen portal</a></p>
+  </div>
+</section>
+
+<!-- APP -->
+<div id="appView" class="pj-app" hidden>
+  <aside class="sidebar" id="sidebar" aria-label="Panchayat navigation">
+    <div class="side-brand"><span class="emblem" aria-hidden="true">▣</span><div><strong>JANASEVA AI</strong><small>Panchayat Dashboard</small></div></div>
+    <nav>
+      <a href="#overview" data-nav="overview"><span aria-hidden="true">◧</span> Overview</a>
+      <a href="#requests" data-nav="requests" data-perm="view_requests"><span aria-hidden="true">✔</span> Verification Requests <b class="nav-count" id="navOpen"></b></a>
+      <a href="#households" data-nav="households" data-perm="view_households"><span aria-hidden="true">⌂</span> Household Records</a>
+      <a href="#surveys" data-nav="surveys" data-perm="view_households"><span aria-hidden="true">✎</span> Survey Data</a>
+      <a href="#analytics" data-nav="analytics" data-perm="view_analytics"><span aria-hidden="true">▤</span> Ward Analytics</a>
+      <a href="#history" data-nav="history" data-perm="view_requests"><span aria-hidden="true">↺</span> Verification History</a>
+      <a href="#notifications" data-nav="notifications"><span aria-hidden="true">🔔</span> Notifications <b class="nav-count" id="navNotif"></b></a>
+      <a href="#admin" data-nav="admin" data-perm="manage_users"><span aria-hidden="true">⚙</span> Administration</a>
+    </nav>
+    <div class="side-foot small">Prototype · fictional demo data · not a government system</div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <button class="btn btn-sm btn-outline-secondary d-lg-none" id="menuBtn" aria-controls="sidebar" aria-expanded="false">☰ Menu</button>
+      <div class="tb-place"><strong id="tbPanchayat"></strong><span id="tbBlock"></span></div>
+      <div class="tb-right">
+        <span class="tb-date" id="tbDate"></span>
+        <a href="#notifications" class="tb-bell" aria-label="Notifications">🔔<b id="tbNotif" hidden></b></a>
+        <span class="tb-user"><strong id="tbUser"></strong><small id="tbRole"></small></span>
+        <button class="btn btn-sm btn-outline-secondary" id="logoutBtn">Sign out</button>
+      </div>
+    </header>
+    <div class="demo-strip" id="demoStrip" hidden>Demonstration panchayat — all households, people and documents are fictional.</div>
+
+    <main id="content" tabindex="-1">
+      <!-- OVERVIEW -->
+      <section data-view="overview" hidden>
+        <div class="page-head"><h1>Overview</h1><p id="ovNote" class="muted small"></p></div>
+        <div class="stat-grid" id="ovStats"></div>
+        <!-- all four charts in one compact row, visible without scrolling -->
+        <div class="chart-row">
+          <div class="panel chart-panel"><h2>Requests by status</h2><div class="chart-box"><canvas id="chStatus" aria-label="Requests by status chart" role="img"></canvas></div></div>
+          <div class="panel chart-panel"><h2>By document category</h2><div class="chart-box"><canvas id="chCategory" aria-label="Requests by category chart" role="img"></canvas></div></div>
+          <div class="panel chart-panel"><h2>By ward</h2><div class="chart-box"><canvas id="chWard" aria-label="Requests by ward chart" role="img"></canvas></div></div>
+          <div class="panel chart-panel"><h2>Official activity (14 days)</h2><div class="chart-box"><canvas id="chActivity" aria-label="Activity chart" role="img"></canvas></div></div>
+        </div>
+        <div class="row g-3">
+          <div class="col-xl-7"><div class="panel"><h2>Recent verification requests</h2><div id="ovRecent"></div></div></div>
+          <div class="col-xl-5"><div class="panel"><h2>Needs immediate attention</h2><div id="ovAttention"></div></div></div>
+          <div class="col-12"><div class="panel"><h2>Recent administrative activity</h2><div id="ovActivity"></div></div></div>
+        </div>
+      </section>
+
+      <!-- REQUESTS -->
+      <section data-view="requests" hidden>
+        <div class="page-head"><h1>Document Verification Requests</h1>
+          <p class="muted small">Verification records whether a document's details match panchayat records. It never approves a scholarship or benefit.</p></div>
+        <form class="panel filters" id="reqFilters">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-3"><label class="form-label small" for="fq">Search</label><input class="form-control form-control-sm" id="fq" placeholder="Request ID, applicant, household"></div>
+            <div class="col-6 col-md-2"><label class="form-label small" for="fward">Ward</label><select class="form-select form-select-sm" id="fward"></select></div>
+            <div class="col-6 col-md-2"><label class="form-label small" for="fcat">Category</label><select class="form-select form-select-sm" id="fcat"></select></div>
+            <div class="col-6 col-md-2"><label class="form-label small" for="fstatus">Status</label><select class="form-select form-select-sm" id="fstatus"></select></div>
+            <div class="col-6 col-md-1"><label class="form-label small" for="ffrom">From</label><input type="date" class="form-control form-control-sm" id="ffrom"></div>
+            <div class="col-6 col-md-1"><label class="form-label small" for="fto">To</label><input type="date" class="form-control form-control-sm" id="fto"></div>
+            <div class="col-6 col-md-1"><label class="form-label small" for="fsort">Sort</label><select class="form-select form-select-sm" id="fsort">
+              <option value="date_desc">Newest</option><option value="date_asc">Oldest</option><option value="status">Status</option></select></div>
+          </div>
+        </form>
+        <div class="panel p-0"><div class="table-responsive" id="reqTable"></div></div>
+        <nav class="pager" id="reqPager" aria-label="Request pages"></nav>
+      </section>
+
+      <!-- HOUSEHOLDS -->
+      <section data-view="households" hidden>
+        <div class="page-head"><h1>Household Records</h1><p class="muted small">Summaries first. Opening personal details is recorded in the audit log.</p></div>
+        <form class="panel filters" id="hhFilters"><div class="row g-2 align-items-end">
+          <div class="col-md-4"><label class="form-label small" for="hq">Household or survey reference</label><input class="form-control form-control-sm" id="hq"></div>
+          <div class="col-6 col-md-2"><label class="form-label small" for="hward">Ward</label><select class="form-select form-select-sm" id="hward"></select></div>
+          <div class="col-6 col-md-3"><label class="form-label small" for="hstatus">Record status</label><select class="form-select form-select-sm" id="hstatus">
+            <option value="">All</option><option value="validated">Validated</option><option value="needs_correction">Needs correction</option></select></div>
+        </div></form>
+        <div class="panel p-0"><div class="table-responsive" id="hhTable"></div></div>
+        <nav class="pager" id="hhPager" aria-label="Household pages"></nav>
+      </section>
+
+      <!-- SURVEYS -->
+      <section data-view="surveys" hidden>
+        <div class="page-head d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div><h1>Survey Data Management</h1><p class="muted small mb-0">Digitise paper door-to-door surveys. Original values are kept; every correction is recorded.</p></div>
+          <button class="btn btn-pj" id="newSurveyBtn" data-perm="manage_surveys">+ New survey entry</button>
+        </div>
+        <div class="btn-group mb-2" role="group" aria-label="Survey status filter" id="svTabs">
+          <button class="btn btn-sm btn-outline-pj active" data-st="">All</button>
+          <button class="btn btn-sm btn-outline-pj" data-st="draft">Draft</button>
+          <button class="btn btn-sm btn-outline-pj" data-st="submitted">Awaiting validation</button>
+          <button class="btn btn-sm btn-outline-pj" data-st="needs_correction">Needs correction</button>
+          <button class="btn btn-sm btn-outline-pj" data-st="validated">Validated</button>
+        </div>
+        <div class="panel p-0"><div class="table-responsive" id="svTable"></div></div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section data-view="analytics" hidden>
+        <div class="page-head"><h1>Ward Analytics</h1><p class="muted small">Aggregate figures only. Survey responses and preliminary flags are not official classifications.</p></div>
+        <form class="panel filters" id="anFilters"><div class="row g-2 align-items-end">
+          <div class="col-6 col-md-2"><label class="form-label small" for="award">Ward</label><select class="form-select form-select-sm" id="award"></select></div>
+          <div class="col-6 col-md-2"><label class="form-label small" for="afrom">Survey from</label><input type="date" class="form-control form-control-sm" id="afrom"></div>
+          <div class="col-6 col-md-2"><label class="form-label small" for="ato">Survey to</label><input type="date" class="form-control form-control-sm" id="ato"></div>
+          <div class="col-6 col-md-3"><label class="form-label small" for="acat">Verification category</label><select class="form-select form-select-sm" id="acat"></select></div>
+        </div></form>
+        <div id="anBody"></div>
+      </section>
+
+      <!-- HISTORY -->
+      <section data-view="history" hidden>
+        <div class="page-head"><h1>Verification History</h1><p class="muted small">Every status change, who made it and when.</p></div>
+        <div class="panel p-0"><div class="table-responsive" id="hiTable"></div></div>
+        <nav class="pager" id="hiPager" aria-label="History pages"></nav>
+      </section>
+
+      <!-- NOTIFICATIONS -->
+      <section data-view="notifications" hidden>
+        <div class="page-head d-flex justify-content-between align-items-center"><h1>Notifications</h1>
+          <button class="btn btn-sm btn-outline-pj" id="readAllBtn">Mark all as read</button></div>
+        <div class="panel" id="ntList"></div>
+      </section>
+
+      <!-- ADMIN -->
+      <section data-view="admin" hidden>
+        <div class="page-head"><h1>Administration and Access Control</h1></div>
+        <div class="row g-3">
+          <div class="col-xl-8"><div class="panel"><div class="d-flex justify-content-between align-items-center"><h2>Officials in this panchayat</h2>
+            <button class="btn btn-sm btn-pj" id="newOfficialBtn">+ Add official</button></div><div id="adOfficials" class="table-responsive"></div></div></div>
+          <div class="col-xl-4"><div class="panel"><h2>Licence</h2><div id="adLicence"></div></div>
+            <div class="panel"><h2>Role permissions</h2><div id="adRoles" class="small"></div></div></div>
+          <div class="col-12"><div class="panel"><h2>Audit log (latest 100)</h2><div id="adAudit" class="table-responsive"></div></div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- Review workspace -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="rvTitle" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable"><div class="modal-content">
+    <div class="modal-header"><h2 class="modal-title h5" id="rvTitle">Review</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+    <div class="modal-body" id="rvBody"></div>
+  </div></div>
+</div>
+
+<!-- Generic form / confirm dialog -->
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="fmTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+    <form id="fmForm" novalidate>
+      <div class="modal-header"><h2 class="modal-title h5" id="fmTitle"></h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body" id="fmBody"></div>
+      <div class="modal-footer"><div class="text-danger small me-auto" id="fmError" role="alert"></div>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-pj" id="fmSubmit">Save</button></div>
+    </form>
+  </div></div>
+</div>
+
+<div class="toast-zone" aria-live="polite" id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/panchayat.js') }}?v={{ asset_version }}"></script>
+</body>
+</html>

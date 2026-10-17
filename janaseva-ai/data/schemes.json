@@ -1,0 +1,1156 @@
+{
+  "_readme": "Owned by P3. One record per scholarship. source_status: 'verified' only when every rule was read from an official document; 'needs verification' otherwise; 'test' for fictional demo records. Each rule has 'verified' and 'source_ref' (points into the record's 'sources'). Never fill amounts, limits or deadlines from memory. benefit_value_inr is a verified number for ranking, or null.",
+  "profile_fields": {
+    "state": "text, e.g. Kerala",
+    "education_level": "SSLC | HSE | DIPLOMA | UG | PG | MPHIL_PHD",
+    "year_of_study": "integer",
+    "course_mode": "regular | distance",
+    "institution_type": "government | aided | self_financing",
+    "institution_aicte_approved": "boolean",
+    "annual_income": "integer (INR per year)",
+    "previous_exam_percentage": "number",
+    "class12_percentile": "number",
+    "gender": "female | male | other (optional)",
+    "community": "optional, asked only with consent, e.g. Muslim, Christian, Latin Catholic",
+    "disability_percent": "optional number",
+    "bpl": "boolean",
+    "receives_other_scholarship": "boolean"
+  },
+  "operators": [
+    "==",
+    "!=",
+    "<",
+    "<=",
+    ">",
+    ">=",
+    "in"
+  ],
+  "schemes": [
+    {
+      "id": "nsp_central_sector",
+      "is_test": false,
+      "name_en": "Central Sector Scheme of Scholarships for College and University Students",
+      "name_ml": "കോളേജ്, സർവകലാശാല വിദ്യാർത്ഥികൾക്കുള്ള സെൻട്രൽ സെക്ടർ സ്കോളർഷിപ്പ്",
+      "department": "Department of Higher Education, Ministry of Education, Government of India",
+      "category": "scholarship",
+      "state": "All India",
+      "beneficiary_group": [
+        "students",
+        "merit"
+      ],
+      "description_en": "Merit-based central scholarship for students in regular degree courses who scored above the 80th percentile in Class 12 and whose family income is within the limit.",
+      "description_ml": "പ്ലസ് ടുവിൽ 80-ാം പെർസന്റൈലിന് മുകളിൽ നേടിയ, വരുമാന പരിധിക്കുള്ളിലുള്ള, റെഗുലർ ബിരുദ കോഴ്സ് പഠിക്കുന്ന വിദ്യാർത്ഥികൾക്കുള്ള കേന്ദ്ര മെറിറ്റ് സ്കോളർഷിപ്പ്.",
+      "keywords": [
+        "central sector",
+        "csss",
+        "nsp",
+        "national scholarship portal",
+        "merit",
+        "scholarship",
+        "degree",
+        "ug",
+        "pg",
+        "btech",
+        "engineering",
+        "college",
+        "university"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "class12_percentile",
+          "operator": ">",
+          "value": 80,
+          "mandatory": true,
+          "description_en": "Above the 80th percentile of successful candidates in your Class 12 stream and board.",
+          "description_ml": "പ്ലസ് ടു പരീക്ഷയിൽ നിങ്ങളുടെ സ്ട്രീമിൽ 80-ാം പെർസന്റൈലിന് മുകളിൽ.",
+          "verified": true,
+          "source_ref": "csss_guidelines"
+        },
+        {
+          "id": "r2",
+          "field": "annual_income",
+          "operator": "<=",
+          "value": 450000,
+          "mandatory": true,
+          "description_en": "Gross family income up to ₹4.5 lakh per year.",
+          "description_ml": "മൊത്ത കുടുംബ വരുമാനം പ്രതിവർഷം ₹4.5 ലക്ഷം വരെ.",
+          "verified": true,
+          "source_ref": "csss_guidelines"
+        },
+        {
+          "id": "r3",
+          "field": "course_mode",
+          "operator": "==",
+          "value": "regular",
+          "mandatory": true,
+          "description_en": "Regular degree course (not correspondence, distance or diploma).",
+          "description_ml": "റെഗുലർ ബിരുദ കോഴ്സ് (വിദൂര/കറസ്പോണ്ടൻസ്/ഡിപ്ലോമ അല്ല).",
+          "verified": true,
+          "source_ref": "csss_guidelines"
+        },
+        {
+          "id": "r4",
+          "field": "education_level",
+          "operator": "in",
+          "value": [
+            "UG",
+            "PG"
+          ],
+          "mandatory": true,
+          "description_en": "Studying a degree (UG) or postgraduate course.",
+          "description_ml": "ബിരുദ / ബിരുദാനന്തര കോഴ്സ് പഠിക്കുന്നയാൾ.",
+          "verified": true,
+          "source_ref": "csss_guidelines"
+        },
+        {
+          "id": "r5",
+          "field": "receives_other_scholarship",
+          "operator": "==",
+          "value": false,
+          "mandatory": true,
+          "description_en": "Not receiving any other scholarship, including state schemes or fee waiver/reimbursement.",
+          "description_ml": "സംസ്ഥാന പദ്ധതികളോ ഫീസ് ഇളവോ ഉൾപ്പെടെ മറ്റൊരു സ്കോളർഷിപ്പും ലഭിക്കുന്നില്ല.",
+          "verified": true,
+          "source_ref": "csss_guidelines"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "marksheet",
+          "name_en": "Mark sheet of qualifying exam",
+          "name_ml": "യോഗ്യതാ പരീക്ഷയുടെ മാർക്ക് ലിസ്റ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "bonafide_cert",
+          "name_en": "Bonafide / institution certificate",
+          "name_ml": "ബോണഫൈഡ് / സ്ഥാപന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "bank_passbook",
+          "name_en": "Bank account in student's name (passbook)",
+          "name_ml": "വിദ്യാർത്ഥിയുടെ പേരിലുള്ള ബാങ്ക് അക്കൗണ്ട് (പാസ്ബുക്ക്)",
+          "mandatory": true
+        }
+      ],
+      "benefits": "₹12,000 per year for the first three years of a degree (B.Tech/B.E. years 1–3); ₹20,000 per year for postgraduation and for years 4–5 of professional/integrated courses (B.Tech/B.E. year 4). Rates as per guidelines applicable from 2022-23.",
+      "benefit_value_inr": 12000,
+      "renewable": true,
+      "renewal_conditions_en": "At least 50% marks in the annual exam, at least 75% attendance, no indiscipline, and renewal applied within the cut-off date.",
+      "mutually_exclusive_with": [
+        "ALL_OTHER_SCHOLARSHIPS"
+      ],
+      "application_method": "Online only, through the National Scholarships Portal (scholarships.gov.in).",
+      "official_url": "https://scholarships.gov.in",
+      "deadline": null,
+      "sources": [
+        {
+          "ref": "csss_guidelines",
+          "title": "Ministry of Education guidelines, applicable from academic year 2022-23 (copy hosted by NIT Kurukshetra)",
+          "url": "https://nitkkr.ac.in/wp-content/uploads/2025/04/Central-Sector-Scheme-Of-Scholarships-For-College-And-University-Students.pdf",
+          "type": "official_guideline_copy"
+        }
+      ],
+      "verification_note": "Rules and amounts read from the official guideline document. Confirm the current year's notice and deadline on scholarships.gov.in.",
+      "last_verified": "2026-10-16",
+      "source_status": "verified"
+    },
+    {
+      "id": "aicte_pragati",
+      "is_test": false,
+      "name_en": "AICTE Pragati Scholarship for Girl Students",
+      "name_ml": "പെൺകുട്ടികൾക്കുള്ള AICTE പ്രഗതി സ്കോളർഷിപ്പ്",
+      "department": "All India Council for Technical Education (AICTE)",
+      "category": "scholarship",
+      "state": "All India",
+      "beneficiary_group": [
+        "students",
+        "women"
+      ],
+      "description_en": "Scholarship for girl students in technical degree or diploma courses at AICTE-approved institutions.",
+      "description_ml": "AICTE അംഗീകൃത സ്ഥാപനങ്ങളിൽ സാങ്കേതിക ബിരുദ / ഡിപ്ലോമ കോഴ്സ് പഠിക്കുന്ന പെൺകുട്ടികൾക്കുള്ള സ്കോളർഷിപ്പ്.",
+      "keywords": [
+        "pragati",
+        "aicte",
+        "girls",
+        "women",
+        "female",
+        "technical",
+        "engineering",
+        "btech",
+        "diploma",
+        "scholarship"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "gender",
+          "operator": "==",
+          "value": "female",
+          "mandatory": true,
+          "description_en": "Girl students only.",
+          "description_ml": "പെൺകുട്ടികൾക്ക് മാത്രം.",
+          "verified": false,
+          "source_ref": "unconfirmed"
+        },
+        {
+          "id": "r2",
+          "field": "institution_aicte_approved",
+          "operator": "==",
+          "value": true,
+          "mandatory": true,
+          "description_en": "Admitted to an AICTE-approved institution.",
+          "description_ml": "AICTE അംഗീകൃത സ്ഥാപനത്തിൽ പ്രവേശനം.",
+          "verified": false,
+          "source_ref": "unconfirmed"
+        },
+        {
+          "id": "r3",
+          "field": "education_level",
+          "operator": "in",
+          "value": [
+            "UG",
+            "DIPLOMA"
+          ],
+          "mandatory": true,
+          "description_en": "Technical degree or diploma course.",
+          "description_ml": "സാങ്കേതിക ബിരുദ / ഡിപ്ലോമ കോഴ്സ്.",
+          "verified": false,
+          "source_ref": "unconfirmed"
+        },
+        {
+          "id": "r4",
+          "field": "annual_income",
+          "operator": "<=",
+          "value": 800000,
+          "mandatory": true,
+          "description_en": "Family income up to ₹8 lakh per year (unverified).",
+          "description_ml": "കുടുംബ വരുമാനം പ്രതിവർഷം ₹8 ലക്ഷം വരെ (പരിശോധിക്കാത്തത്).",
+          "verified": false,
+          "source_ref": "unconfirmed"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "marksheet",
+          "name_en": "Mark sheet of qualifying exam",
+          "name_ml": "യോഗ്യതാ പരീക്ഷയുടെ മാർക്ക് ലിസ്റ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "admission_proof",
+          "name_en": "Admission letter / fee receipt",
+          "name_ml": "പ്രവേശന കത്ത് / ഫീസ് രസീത്",
+          "mandatory": true
+        },
+        {
+          "id": "bank_passbook",
+          "name_en": "Bank account in student's name (passbook)",
+          "name_ml": "വിദ്യാർത്ഥിയുടെ പേരിലുള്ള ബാങ്ക് അക്കൗണ്ട് (പാസ്ബുക്ക്)",
+          "mandatory": true
+        }
+      ],
+      "benefits": "Reported as ₹50,000 per year — needs verification on the official AICTE notice.",
+      "benefit_value_inr": null,
+      "renewable": null,
+      "mutually_exclusive_with": [],
+      "application_method": "Online through the National Scholarships Portal (verify current notice).",
+      "official_url": "https://www.aicte-india.org",
+      "deadline": null,
+      "sources": [
+        {
+          "ref": "official",
+          "title": "AICTE Pragati Scheme Guidelines (official PDF, could not be opened automatically)",
+          "url": "https://aicte.gov.in/sites/default/files/Pragati Scheme Guidelines.pdf",
+          "type": "official_unread"
+        },
+        {
+          "ref": "unconfirmed",
+          "title": "Not yet confirmed from an official document; values taken from common public listings",
+          "url": null,
+          "type": "unconfirmed"
+        }
+      ],
+      "verification_note": "TEAM TODO: open the official AICTE guideline PDF and confirm year-of-study rule (first year / lateral entry), income limit, number of girls per family, amount and documents.",
+      "last_verified": null,
+      "source_status": "needs verification"
+    },
+    {
+      "id": "aicte_saksham",
+      "is_test": false,
+      "name_en": "AICTE Saksham Scholarship for Specially-Abled Students",
+      "name_ml": "ഭിന്നശേഷി വിദ്യാർത്ഥികൾക്കുള്ള AICTE സക്ഷം സ്കോളർഷിപ്പ്",
+      "department": "All India Council for Technical Education (AICTE)",
+      "category": "scholarship",
+      "state": "All India",
+      "beneficiary_group": [
+        "students",
+        "disability"
+      ],
+      "description_en": "Scholarship for specially-abled students in technical degree or diploma courses at AICTE-approved institutions.",
+      "description_ml": "AICTE അംഗീകൃത സ്ഥാപനങ്ങളിൽ സാങ്കേതിക കോഴ്സ് പഠിക്കുന്ന ഭിന്നശേഷി വിദ്യാർത്ഥികൾക്കുള്ള സ്കോളർഷിപ്പ്.",
+      "keywords": [
+        "saksham",
+        "aicte",
+        "disability",
+        "differently abled",
+        "specially abled",
+        "pwd",
+        "technical",
+        "engineering",
+        "diploma",
+        "scholarship"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "disability_percent",
+          "operator": ">=",
+          "value": 40,
+          "mandatory": true,
+          "description_en": "Disability of 40% or more (unverified).",
+          "description_ml": "40% അല്ലെങ്കിൽ കൂടുതൽ ഭിന്നശേഷി (പരിശോധിക്കാത്തത്).",
+          "verified": false,
+          "source_ref": "unconfirmed"
+        },
+        {
+          "id": "r2",
+          "field": "institution_aicte_approved",
+          "operator": "==",
+          "value": true,
+          "mandatory": true,
+          "description_en": "Admitted to an AICTE-approved institution.",
+          "description_ml": "AICTE അംഗീകൃത സ്ഥാപനത്തിൽ പ്രവേശനം.",
+          "verified": false,
+          "source_ref": "unconfirmed"
+        },
+        {
+          "id": "r3",
+          "field": "education_level",
+          "operator": "in",
+          "value": [
+            "UG",
+            "DIPLOMA"
+          ],
+          "mandatory": true,
+          "description_en": "Technical degree or diploma course.",
+          "description_ml": "സാങ്കേതിക ബിരുദ / ഡിപ്ലോമ കോഴ്സ്.",
+          "verified": false,
+          "source_ref": "unconfirmed"
+        },
+        {
+          "id": "r4",
+          "field": "annual_income",
+          "operator": "<=",
+          "value": 800000,
+          "mandatory": true,
+          "description_en": "Family income up to ₹8 lakh per year (unverified).",
+          "description_ml": "കുടുംബ വരുമാനം പ്രതിവർഷം ₹8 ലക്ഷം വരെ (പരിശോധിക്കാത്തത്).",
+          "verified": false,
+          "source_ref": "unconfirmed"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "disability_cert",
+          "name_en": "Disability certificate (40% or more)",
+          "name_ml": "ഭിന്നശേഷി സർട്ടിഫിക്കറ്റ് (40% അല്ലെങ്കിൽ കൂടുതൽ)",
+          "mandatory": true
+        },
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "marksheet",
+          "name_en": "Mark sheet of qualifying exam",
+          "name_ml": "യോഗ്യതാ പരീക്ഷയുടെ മാർക്ക് ലിസ്റ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "admission_proof",
+          "name_en": "Admission letter / fee receipt",
+          "name_ml": "പ്രവേശന കത്ത് / ഫീസ് രസീത്",
+          "mandatory": true
+        },
+        {
+          "id": "bank_passbook",
+          "name_en": "Bank account in student's name (passbook)",
+          "name_ml": "വിദ്യാർത്ഥിയുടെ പേരിലുള്ള ബാങ്ക് അക്കൗണ്ട് (പാസ്ബുക്ക്)",
+          "mandatory": true
+        }
+      ],
+      "benefits": "Reported as ₹50,000 per year — needs verification on the official AICTE notice.",
+      "benefit_value_inr": null,
+      "renewable": null,
+      "mutually_exclusive_with": [],
+      "application_method": "Online through the National Scholarships Portal (verify current notice).",
+      "official_url": "https://www.aicte-india.org",
+      "deadline": null,
+      "sources": [
+        {
+          "ref": "official",
+          "title": "AICTE Saksham Scheme Guidelines (official PDF, could not be opened automatically)",
+          "url": "https://aicte.gov.in/sites/default/files/Saksham Scheme Guidelines.pdf",
+          "type": "official_unread"
+        },
+        {
+          "ref": "unconfirmed",
+          "title": "Not yet confirmed from an official document; values taken from common public listings",
+          "url": null,
+          "type": "unconfirmed"
+        }
+      ],
+      "verification_note": "TEAM TODO: confirm disability %, income limit, amount, year-of-study rule from the official AICTE PDF.",
+      "last_verified": null,
+      "source_status": "needs verification"
+    },
+    {
+      "id": "nsp_pms_minorities",
+      "is_test": false,
+      "name_en": "Post-Matric Scholarship for Minorities",
+      "name_ml": "ന്യൂനപക്ഷ വിദ്യാർത്ഥികൾക്കുള്ള പോസ്റ്റ്-മെട്രിക് സ്കോളർഷിപ്പ്",
+      "department": "Ministry of Minority Affairs, Government of India",
+      "category": "scholarship",
+      "state": "All India",
+      "beneficiary_group": [
+        "students",
+        "minority"
+      ],
+      "description_en": "Central scholarship for students from notified minority communities, from Class 11 up to PhD, with at least 50% marks and family income within the limit.",
+      "description_ml": "വിജ്ഞാപനം ചെയ്ത ന്യൂനപക്ഷ സമുദായങ്ങളിലെ, 50% മാർക്കും വരുമാന പരിധിയുമുള്ള, പ്ലസ് വൺ മുതൽ പിഎച്ച്ഡി വരെയുള്ള വിദ്യാർത്ഥികൾക്കുള്ള കേന്ദ്ര സ്കോളർഷിപ്പ്.",
+      "keywords": [
+        "post matric",
+        "minority",
+        "nsp",
+        "muslim",
+        "christian",
+        "scholarship",
+        "plus one",
+        "plus two",
+        "degree",
+        "pg"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "community",
+          "operator": "in",
+          "value": [
+            "Muslim",
+            "Christian",
+            "Sikh",
+            "Buddhist",
+            "Jain",
+            "Parsi"
+          ],
+          "mandatory": true,
+          "description_en": "Belong to a notified minority community: Muslim, Christian, Sikh, Buddhist, Jain or Parsi (asked only with your consent).",
+          "description_ml": "മുസ്ലിം, ക്രിസ്ത്യൻ, സിഖ്, ബുദ്ധ, ജൈന അല്ലെങ്കിൽ പാഴ്സി സമുദായം (നിങ്ങളുടെ സമ്മതത്തോടെ മാത്രം ചോദിക്കുന്നു).",
+          "verified": true,
+          "source_ref": "moma_guidelines"
+        },
+        {
+          "id": "r2",
+          "field": "previous_exam_percentage",
+          "operator": ">=",
+          "value": 50,
+          "mandatory": true,
+          "description_en": "At least 50% marks in the previous final exam.",
+          "description_ml": "മുൻ പരീക്ഷയിൽ കുറഞ്ഞത് 50% മാർക്ക്.",
+          "verified": true,
+          "source_ref": "moma_guidelines"
+        },
+        {
+          "id": "r3",
+          "field": "annual_income",
+          "operator": "<=",
+          "value": 200000,
+          "mandatory": true,
+          "description_en": "Parents' annual income up to ₹2 lakh from all sources.",
+          "description_ml": "രക്ഷിതാക്കളുടെ വാർഷിക വരുമാനം ₹2 ലക്ഷം വരെ.",
+          "verified": true,
+          "source_ref": "moma_guidelines"
+        },
+        {
+          "id": "r4",
+          "field": "education_level",
+          "operator": "in",
+          "value": [
+            "HSE",
+            "DIPLOMA",
+            "UG",
+            "PG",
+            "MPHIL_PHD"
+          ],
+          "mandatory": true,
+          "description_en": "Class 11 to PhD (courses under one year are not covered).",
+          "description_ml": "പ്ലസ് വൺ മുതൽ പിഎച്ച്ഡി വരെ (ഒരു വർഷത്തിൽ താഴെയുള്ള കോഴ്സുകൾ ഉൾപ്പെടില്ല).",
+          "verified": true,
+          "source_ref": "moma_guidelines"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "community_cert",
+          "name_en": "Community certificate / self-declaration",
+          "name_ml": "സമുദായ സർട്ടിഫിക്കറ്റ് / സ്വയം സാക്ഷ്യപത്രം",
+          "mandatory": true
+        },
+        {
+          "id": "marksheet",
+          "name_en": "Mark sheet of qualifying exam",
+          "name_ml": "യോഗ്യതാ പരീക്ഷയുടെ മാർക്ക് ലിസ്റ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "bank_passbook",
+          "name_en": "Bank account in student's name (passbook)",
+          "name_ml": "വിദ്യാർത്ഥിയുടെ പേരിലുള്ള ബാങ്ക് അക്കൗണ്ട് (പാസ്ബുക്ക്)",
+          "mandatory": true
+        }
+      ],
+      "benefits": "Admission/tuition fee and a monthly maintenance allowance (rates in the 2017-18 to 2019-20 guidelines; current rates need verification).",
+      "benefit_value_inr": null,
+      "renewable": null,
+      "mutually_exclusive_with": [],
+      "application_method": "Online through the National Scholarships Portal (scholarships.gov.in).",
+      "official_url": "https://scholarships.gov.in",
+      "deadline": null,
+      "sources": [
+        {
+          "ref": "moma_guidelines",
+          "title": "Ministry of Minority Affairs guidelines covering 2017-18 to 2019-20 (copy hosted by Govt. of Meghalaya)",
+          "url": "https://www.megeducation.gov.in/dhte/other_docs/guidelines/Guidelines Post Matric Scholarship of MOMA.pdf",
+          "type": "official_guideline_copy_outdated"
+        }
+      ],
+      "verification_note": "Rules come from an official guideline, but that guideline covers 2017-18 to 2019-20. Confirm the current scheme status, rules and amounts on scholarships.gov.in before marking verified.",
+      "last_verified": null,
+      "source_status": "needs verification"
+    },
+    {
+      "id": "kerala_mundassery",
+      "is_test": false,
+      "name_en": "Prof. Joseph Mundassery Scholarship Award",
+      "name_ml": "പ്രൊഫ. ജോസഫ് മുണ്ടശ്ശേരി സ്കോളർഷിപ്പ് അവാർഡ്",
+      "department": "Directorate of Minority Welfare, Government of Kerala (verify)",
+      "category": "scholarship",
+      "state": "Kerala",
+      "beneficiary_group": [
+        "students",
+        "minority",
+        "merit"
+      ],
+      "description_en": "Kerala merit award for minority community students with high marks in SSLC/Plus Two, degree or PG.",
+      "description_ml": "എസ്എസ്എൽസി/പ്ലസ് ടു, ബിരുദം, ബിരുദാനന്തര ബിരുദം എന്നിവയിൽ ഉയർന്ന മാർക്ക് നേടിയ ന്യൂനപക്ഷ വിദ്യാർത്ഥികൾക്കുള്ള കേരള മെറിറ്റ് അവാർഡ്.",
+      "keywords": [
+        "mundassery",
+        "minority",
+        "merit",
+        "kerala",
+        "a+",
+        "sslc",
+        "plus two",
+        "scholarship",
+        "award"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "state",
+          "operator": "==",
+          "value": "Kerala",
+          "mandatory": true,
+          "description_en": "Kerala student.",
+          "description_ml": "കേരളത്തിലെ വിദ്യാർത്ഥി.",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r2",
+          "field": "community",
+          "operator": "in",
+          "value": [
+            "Muslim",
+            "Christian",
+            "Sikh",
+            "Buddhist",
+            "Jain",
+            "Parsi"
+          ],
+          "mandatory": true,
+          "description_en": "Minority community student (asked only with your consent).",
+          "description_ml": "ന്യൂനപക്ഷ സമുദായ വിദ്യാർത്ഥി (സമ്മതത്തോടെ മാത്രം).",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r3",
+          "field": "previous_exam_percentage",
+          "operator": ">=",
+          "value": 80,
+          "mandatory": true,
+          "description_en": "Reported: 80% for degree level, 75% for PG level, A+ for SSLC/Plus Two (unverified; level-specific).",
+          "description_ml": "റിപ്പോർട്ട്: ബിരുദതലം 80%, പിജി 75%, എസ്എസ്എൽസി/പ്ലസ് ടു A+ (പരിശോധിക്കാത്തത്).",
+          "verified": false,
+          "source_ref": "secondary"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "marksheet",
+          "name_en": "Mark sheet of qualifying exam",
+          "name_ml": "യോഗ്യതാ പരീക്ഷയുടെ മാർക്ക് ലിസ്റ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "community_cert",
+          "name_en": "Community certificate / self-declaration",
+          "name_ml": "സമുദായ സർട്ടിഫിക്കറ്റ് / സ്വയം സാക്ഷ്യപത്രം",
+          "mandatory": true
+        },
+        {
+          "id": "nativity_cert",
+          "name_en": "Nativity certificate (Kerala)",
+          "name_ml": "നേറ്റിവിറ്റി സർട്ടിഫിക്കറ്റ് (കേരളം)",
+          "mandatory": true
+        },
+        {
+          "id": "bank_passbook",
+          "name_en": "Bank account in student's name (passbook)",
+          "name_ml": "വിദ്യാർത്ഥിയുടെ പേരിലുള്ള ബാങ്ക് അക്കൗണ്ട് (പാസ്ബുക്ക്)",
+          "mandatory": true
+        }
+      ],
+      "benefits": "Reported as ₹10,000 (SSLC/Plus Two) and ₹15,000 (UG/PG) — needs verification.",
+      "benefit_value_inr": null,
+      "renewable": false,
+      "mutually_exclusive_with": [],
+      "application_method": "Online through the Kerala Minority Welfare scholarship portal (verify).",
+      "official_url": "https://www.minoritywelfare.kerala.gov.in",
+      "deadline": null,
+      "sources": [
+        {
+          "ref": "secondary",
+          "title": "YouthPower India listing (third-party, not official)",
+          "url": "https://youthpower.in/scheme/pjmskrl",
+          "type": "third_party"
+        }
+      ],
+      "verification_note": "TEAM TODO: open minoritywelfare.kerala.gov.in in a browser, find the current notification, confirm marks per level, income limit/BPL priority, amounts, documents and deadline.",
+      "last_verified": null,
+      "source_status": "needs verification"
+    },
+    {
+      "id": "kerala_ch_muhammed_koya",
+      "is_test": false,
+      "name_en": "C. H. Muhammed Koya Scholarship (girl students)",
+      "name_ml": "സി. എച്ച്. മുഹമ്മദ് കോയ സ്കോളർഷിപ്പ് (പെൺകുട്ടികൾക്ക്)",
+      "department": "Directorate of Minority Welfare, Government of Kerala (verify)",
+      "category": "scholarship",
+      "state": "Kerala",
+      "beneficiary_group": [
+        "students",
+        "women",
+        "minority"
+      ],
+      "description_en": "Kerala scholarship and hostel stipend for girl students from Muslim, Latin Catholic and converted Christian communities in degree, PG and professional courses.",
+      "description_ml": "ബിരുദം, ബിരുദാനന്തര ബിരുദം, പ്രൊഫഷണൽ കോഴ്സുകൾ പഠിക്കുന്ന മുസ്ലിം, ലത്തീൻ കത്തോലിക്ക, പരിവർത്തിത ക്രിസ്ത്യൻ വിഭാഗത്തിലെ പെൺകുട്ടികൾക്കുള്ള സ്കോളർഷിപ്പും ഹോസ്റ്റൽ സ്റ്റൈപ്പൻഡും.",
+      "keywords": [
+        "ch muhammed koya",
+        "muhammed koya",
+        "girls",
+        "women",
+        "minority",
+        "muslim",
+        "latin",
+        "hostel",
+        "stipend",
+        "kerala",
+        "scholarship"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "gender",
+          "operator": "==",
+          "value": "female",
+          "mandatory": true,
+          "description_en": "Girl students only.",
+          "description_ml": "പെൺകുട്ടികൾക്ക് മാത്രം.",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r2",
+          "field": "state",
+          "operator": "==",
+          "value": "Kerala",
+          "mandatory": true,
+          "description_en": "Native of Kerala.",
+          "description_ml": "കേരള സ്വദേശി.",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r3",
+          "field": "community",
+          "operator": "in",
+          "value": [
+            "Muslim",
+            "Latin Catholic",
+            "Converted Christian"
+          ],
+          "mandatory": true,
+          "description_en": "Muslim, Latin Catholic or converted Christian community (asked only with your consent).",
+          "description_ml": "മുസ്ലിം, ലത്തീൻ കത്തോലിക്ക അല്ലെങ്കിൽ പരിവർത്തിത ക്രിസ്ത്യൻ (സമ്മതത്തോടെ മാത്രം).",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r4",
+          "field": "education_level",
+          "operator": "in",
+          "value": [
+            "UG",
+            "PG"
+          ],
+          "mandatory": true,
+          "description_en": "Degree, PG or professional course.",
+          "description_ml": "ബിരുദം, ബിരുദാനന്തര ബിരുദം അല്ലെങ്കിൽ പ്രൊഫഷണൽ കോഴ്സ്.",
+          "verified": false,
+          "source_ref": "secondary"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "marksheet",
+          "name_en": "Mark sheet of qualifying exam",
+          "name_ml": "യോഗ്യതാ പരീക്ഷയുടെ മാർക്ക് ലിസ്റ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "community_cert",
+          "name_en": "Community certificate / self-declaration",
+          "name_ml": "സമുദായ സർട്ടിഫിക്കറ്റ് / സ്വയം സാക്ഷ്യപത്രം",
+          "mandatory": true
+        },
+        {
+          "id": "nativity_cert",
+          "name_en": "Nativity certificate (Kerala)",
+          "name_ml": "നേറ്റിവിറ്റി സർട്ടിഫിക്കറ്റ് (കേരളം)",
+          "mandatory": true
+        },
+        {
+          "id": "bonafide_cert",
+          "name_en": "Bonafide / institution certificate",
+          "name_ml": "ബോണഫൈഡ് / സ്ഥാപന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "bank_passbook",
+          "name_en": "Bank account in student's name (passbook)",
+          "name_ml": "വിദ്യാർത്ഥിയുടെ പേരിലുള്ള ബാങ്ക് അക്കൗണ്ട് (പാസ്ബുക്ക്)",
+          "mandatory": true
+        }
+      ],
+      "benefits": "Reported as ₹4,000 (UG), ₹5,000 (PG), ₹6,000 (professional) per year, plus ₹12,000 hostel stipend — needs verification.",
+      "benefit_value_inr": null,
+      "renewable": null,
+      "mutually_exclusive_with": [],
+      "application_method": "Online through the Kerala Minority Welfare scholarship portal (verify).",
+      "official_url": "https://www.minoritywelfare.kerala.gov.in",
+      "deadline": null,
+      "sources": [
+        {
+          "ref": "secondary",
+          "title": "YouthPower India listing (third-party, not official)",
+          "url": "https://youthpower.in/scheme/chms",
+          "type": "third_party"
+        },
+        {
+          "ref": "official",
+          "title": "Kerala Minority Welfare page (could not be opened automatically)",
+          "url": "http://www.minoritywelfare.kerala.gov.in/muslim-girls-scholarship.php",
+          "type": "official_unread"
+        }
+      ],
+      "verification_note": "TEAM TODO: open the official Minority Welfare page in a browser and confirm communities, merit/income priority, amounts, hostel rules and deadline.",
+      "last_verified": null,
+      "source_status": "needs verification"
+    },
+    {
+      "id": "kerala_suvarna_jubilee",
+      "is_test": false,
+      "name_en": "Suvarna Jubilee Merit Scholarship",
+      "name_ml": "സുവർണ ജൂബിലി മെറിറ്റ് സ്കോളർഷിപ്പ്",
+      "department": "Directorate of Collegiate Education, Kerala (verify)",
+      "category": "scholarship",
+      "state": "Kerala",
+      "beneficiary_group": [
+        "students",
+        "merit"
+      ],
+      "description_en": "Kerala scholarship for first-year UG/PG students in government or aided colleges. Conditions below come from a college notice and must be checked against the official notification.",
+      "description_ml": "സർക്കാർ / എയ്ഡഡ് കോളേജുകളിലെ ഒന്നാം വർഷ ബിരുദ / ബിരുദാനന്തര വിദ്യാർത്ഥികൾക്കുള്ള കേരള സ്കോളർഷിപ്പ്. ഔദ്യോഗിക വിജ്ഞാപനം പരിശോധിക്കുക.",
+      "keywords": [
+        "suvarna jubilee",
+        "merit",
+        "dce",
+        "collegiate education",
+        "kerala",
+        "first year",
+        "ug",
+        "pg",
+        "scholarship"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "state",
+          "operator": "==",
+          "value": "Kerala",
+          "mandatory": true,
+          "description_en": "Studying in Kerala.",
+          "description_ml": "കേരളത്തിൽ പഠിക്കുന്നയാൾ.",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r2",
+          "field": "institution_type",
+          "operator": "in",
+          "value": [
+            "government",
+            "aided"
+          ],
+          "mandatory": true,
+          "description_en": "Government or aided college, or university department.",
+          "description_ml": "സർക്കാർ / എയ്ഡഡ് കോളേജ് അല്ലെങ്കിൽ സർവകലാശാല വകുപ്പ്.",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r3",
+          "field": "year_of_study",
+          "operator": "==",
+          "value": 1,
+          "mandatory": true,
+          "description_en": "First-year UG or PG student.",
+          "description_ml": "ഒന്നാം വർഷ ബിരുദ / ബിരുദാനന്തര വിദ്യാർത്ഥി.",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r4",
+          "field": "bpl",
+          "operator": "==",
+          "value": true,
+          "mandatory": true,
+          "description_en": "Belongs to a BPL family (per college notice; unverified).",
+          "description_ml": "ബിപിഎൽ കുടുംബം (കോളേജ് അറിയിപ്പ് പ്രകാരം; പരിശോധിക്കാത്തത്).",
+          "verified": false,
+          "source_ref": "secondary"
+        },
+        {
+          "id": "r5",
+          "field": "previous_exam_percentage",
+          "operator": ">=",
+          "value": 50,
+          "mandatory": true,
+          "description_en": "At least 50% in the qualifying exam (per college notice; unverified).",
+          "description_ml": "യോഗ്യതാ പരീക്ഷയിൽ കുറഞ്ഞത് 50% (കോളേജ് അറിയിപ്പ് പ്രകാരം; പരിശോധിക്കാത്തത്).",
+          "verified": false,
+          "source_ref": "secondary"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "marksheet",
+          "name_en": "Mark sheet of qualifying exam",
+          "name_ml": "യോഗ്യതാ പരീക്ഷയുടെ മാർക്ക് ലിസ്റ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "bonafide_cert",
+          "name_en": "Bonafide / institution certificate",
+          "name_ml": "ബോണഫൈഡ് / സ്ഥാപന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "bank_passbook",
+          "name_en": "Bank account in student's name (passbook)",
+          "name_ml": "വിദ്യാർത്ഥിയുടെ പേരിലുള്ള ബാങ്ക് അക്കൗണ്ട് (പാസ്ബുക്ക്)",
+          "mandatory": true
+        }
+      ],
+      "benefits": "Reported as ₹10,000 per year in a college notice — needs verification.",
+      "benefit_value_inr": null,
+      "renewable": null,
+      "mutually_exclusive_with": [],
+      "application_method": "Online through the DCE scholarship portal (verify).",
+      "official_url": "https://www.dcescholarship.kerala.gov.in",
+      "deadline": null,
+      "sources": [
+        {
+          "ref": "secondary",
+          "title": "KNM Government College scholarship notice (college page, not the official notification)",
+          "url": "https://knmgovtcollege.ac.in/index.php/scholarships/suvarna-jubilee-scholarship",
+          "type": "college_notice"
+        }
+      ],
+      "verification_note": "TEAM TODO: other sites describe different conditions for this scheme. Open dcescholarship.kerala.gov.in and confirm every rule before marking verified.",
+      "last_verified": null,
+      "source_status": "needs verification"
+    },
+    {
+      "id": "kerala_egrantz",
+      "is_test": false,
+      "name_en": "e-Grantz Post-Matric Educational Assistance",
+      "name_ml": "ഇ-ഗ്രാന്റ്സ് പോസ്റ്റ്-മെട്രിക് വിദ്യാഭ്യാസ ആനുകൂല്യം",
+      "department": "Government of Kerala (verify responsible department)",
+      "category": "scholarship",
+      "state": "Kerala",
+      "beneficiary_group": [
+        "students"
+      ],
+      "description_en": "Kerala's online system for post-matric educational assistance for eligible communities. Conditions depend on community and course; check the official portal.",
+      "description_ml": "അർഹരായ സമുദായങ്ങൾക്കുള്ള പോസ്റ്റ്-മെട്രിക് വിദ്യാഭ്യാസ ആനുകൂല്യത്തിനുള്ള കേരളത്തിന്റെ ഓൺലൈൻ സംവിധാനം. ഔദ്യോഗിക പോർട്ടൽ പരിശോധിക്കുക.",
+      "keywords": [
+        "egrantz",
+        "e-grantz",
+        "post matric",
+        "fee",
+        "kerala",
+        "scholarship"
+      ],
+      "eligibility_rules": [],
+      "required_documents": [],
+      "benefits": "Needs verification",
+      "benefit_value_inr": null,
+      "renewable": null,
+      "mutually_exclusive_with": [],
+      "application_method": "Online via the e-Grantz portal, usually through your institution (verify).",
+      "official_url": "https://www.egrantz.kerala.gov.in",
+      "deadline": null,
+      "sources": [],
+      "verification_note": "TEAM TODO: rules vary by community and course. Add only after reading the official e-Grantz guidelines.",
+      "last_verified": null,
+      "source_status": "needs verification"
+    },
+    {
+      "id": "test_ug_merit",
+      "is_test": true,
+      "name_en": "[TEST] Demo UG Technical Scholarship",
+      "name_ml": "[ടെസ്റ്റ്] ഡെമോ ബിരുദ സാങ്കേതിക സ്കോളർഷിപ്പ്",
+      "department": "Fictional test record",
+      "category": "scholarship",
+      "state": "Kerala",
+      "beneficiary_group": [
+        "students"
+      ],
+      "description_en": "FICTIONAL record for testing the demo. Not a real government scheme.",
+      "description_ml": "ഡെമോ പരിശോധനയ്ക്കുള്ള സാങ്കൽപ്പിക രേഖ. യഥാർത്ഥ സർക്കാർ പദ്ധതിയല്ല.",
+      "keywords": [
+        "scholarship",
+        "btech",
+        "b.tech",
+        "engineering",
+        "ug",
+        "degree",
+        "technical",
+        "student"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "state",
+          "operator": "==",
+          "value": "Kerala",
+          "mandatory": true,
+          "description_en": "Must be a Kerala resident.",
+          "description_ml": "കേരളത്തിൽ താമസിക്കുന്നയാളായിരിക്കണം.",
+          "verified": true,
+          "source_ref": "test"
+        },
+        {
+          "id": "r2",
+          "field": "education_level",
+          "operator": "in",
+          "value": [
+            "UG"
+          ],
+          "mandatory": true,
+          "description_en": "Must be studying an undergraduate course.",
+          "description_ml": "ബിരുദ കോഴ്സ് പഠിക്കുന്നയാളായിരിക്കണം.",
+          "verified": true,
+          "source_ref": "test"
+        },
+        {
+          "id": "r3",
+          "field": "annual_income",
+          "operator": "<=",
+          "value": 250000,
+          "mandatory": true,
+          "description_en": "Annual family income must be at or below the test limit (illustrative value).",
+          "description_ml": "വാർഷിക കുടുംബ വരുമാനം ടെസ്റ്റ് പരിധിക്ക് താഴെയായിരിക്കണം (ഉദാഹരണ മൂല്യം).",
+          "verified": true,
+          "source_ref": "test"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "marksheet",
+          "name_en": "Previous mark sheet",
+          "name_ml": "മുൻ മാർക്ക് ലിസ്റ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "institution_cert",
+          "name_en": "Institution / bonafide certificate",
+          "name_ml": "സ്ഥാപന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "bank_passbook",
+          "name_en": "Bank passbook front page",
+          "name_ml": "ബാങ്ക് പാസ്ബുക്ക് മുൻ പേജ്",
+          "mandatory": false
+        }
+      ],
+      "benefits": "Test record: no real benefit",
+      "application_method": "Demo only",
+      "official_url": null,
+      "deadline": null,
+      "last_verified": "2026-10-16",
+      "source_status": "test",
+      "sources": [],
+      "benefit_value_inr": null,
+      "renewable": null,
+      "mutually_exclusive_with": [],
+      "verification_note": "Fictional test record for the demo."
+    },
+    {
+      "id": "test_girls_pg",
+      "is_test": true,
+      "name_en": "[TEST] Demo PG Scholarship for Women",
+      "name_ml": "[ടെസ്റ്റ്] സ്ത്രീകൾക്കുള്ള ഡെമോ ബിരുദാനന്തര സ്കോളർഷിപ്പ്",
+      "department": "Fictional test record",
+      "category": "scholarship",
+      "state": "Kerala",
+      "beneficiary_group": [
+        "students",
+        "women"
+      ],
+      "description_en": "FICTIONAL record for testing a failing condition. Not a real government scheme.",
+      "description_ml": "നിബന്ധന പാലിക്കാത്ത സാഹചര്യം പരിശോധിക്കാനുള്ള സാങ്കൽപ്പിക രേഖ.",
+      "keywords": [
+        "scholarship",
+        "pg",
+        "postgraduate",
+        "women",
+        "girls",
+        "mtech",
+        "msc"
+      ],
+      "eligibility_rules": [
+        {
+          "id": "r1",
+          "field": "education_level",
+          "operator": "in",
+          "value": [
+            "PG"
+          ],
+          "mandatory": true,
+          "description_en": "Must be studying a postgraduate course.",
+          "description_ml": "ബിരുദാനന്തര കോഴ്സ് പഠിക്കുന്നയാളായിരിക്കണം.",
+          "verified": true,
+          "source_ref": "test"
+        },
+        {
+          "id": "r2",
+          "field": "gender",
+          "operator": "==",
+          "value": "female",
+          "mandatory": true,
+          "description_en": "Open to women applicants.",
+          "description_ml": "വനിതാ അപേക്ഷകർക്ക് മാത്രം.",
+          "verified": true,
+          "source_ref": "test"
+        }
+      ],
+      "required_documents": [
+        {
+          "id": "income_cert",
+          "name_en": "Income certificate",
+          "name_ml": "വരുമാന സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        },
+        {
+          "id": "degree_cert",
+          "name_en": "Degree certificate",
+          "name_ml": "ബിരുദ സർട്ടിഫിക്കറ്റ്",
+          "mandatory": true
+        }
+      ],
+      "benefits": "Test record: no real benefit",
+      "application_method": "Demo only",
+      "official_url": null,
+      "deadline": null,
+      "last_verified": "2026-10-16",
+      "source_status": "test",
+      "sources": [],
+      "benefit_value_inr": null,
+      "renewable": null,
+      "mutually_exclusive_with": [],
+      "verification_note": "Fictional test record for the demo."
+    }
+  ]
+}

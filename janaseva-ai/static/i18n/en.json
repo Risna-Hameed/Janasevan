@@ -297,21 +297,5 @@
   "submit.when": "Submitted on",
   "submit.finalTitle": "Your final application",
   "submit.download": "Download application PDF",
-  "submit.nextStep": "Keep this PDF. Use it when you apply through the official portal or at your Akshaya centre.",
-  "find.title": "New schemes from official websites",
-  "find.hint": "Searches official scholarship sites with Tavily",
-  "find.last": "Last search",
-  "find.never": "never",
-  "find.btn": "Find new schemes online",
-  "find.searching": "Searching official sites…",
-  "find.new": "New",
-  "find.closes": "closes",
-  "find.added": "{n} new scheme(s) added to the list below.",
-  "find.none": "No new schemes found",
-  "find.known": "already in the list",
-  "find.noKey": "Tavily key not set. Add TAVILY_API_KEY to the .env file and restart the app.",
-  "find.note": "Found online: details were copied from the official page. Confirm them there before applying.",
-  "find.copied": "copied from the official page",
-  "find.evidence": "Where these details came from (text on the official page)",
-  "find.openOfficial": "Open official page"
+  "submit.nextStep": "Keep this PDF. Use it when you apply through the official portal or at your Akshaya centre."
 }

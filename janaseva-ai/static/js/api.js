@@ -35,8 +35,6 @@ const API = (() => {
     schemes: (q = "", category = "", verifiedOnly = false) =>
       call("GET", `/api/schemes?q=${encodeURIComponent(q)}&category=${encodeURIComponent(category)}${verifiedOnly ? "&verified_only=1" : ""}`),
     scheme: (id) => call("GET", `/api/schemes/${encodeURIComponent(id)}`),
-    foundOnline: () => call("GET", "/api/schemes/found"),
-    findNewOnline: () => call("POST", "/api/schemes/find-new", {}),
     getProfile: () => call("GET", "/api/profile"),
     saveProfile: (profile) => call("POST", "/api/profile", { profile }),
     clearProfile: () => call("DELETE", "/api/profile"),

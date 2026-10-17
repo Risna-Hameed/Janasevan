@@ -92,34 +92,13 @@ Reset never touches student profiles, drafts or saved schemes.
 **Demo files:** `data/samples/sample_income_certificate.png` (matches the demo profile) and
 `sample_income_certificate_mismatch.png` (shows the name/income mismatch alert).
 
-## Find new schemes online (Tavily)
-
-On **Discover**, press **🔎 Find new schemes online**. The app asks Tavily to search only official
-sites (scholarships.gov.in, Kerala DCE scholarships, Kerala Minority Welfare, e-Grantz, AICTE) with
-4 fixed questions (about 4 credits per click; the free plan gives 1,000 a month). Then:
-
-- portal home pages, login pages and non-government sites are skipped;
-- schemes already in the list are skipped (same link or a very similar name);
-- from each new notice the app copies only what is written: income limit, minimum marks, UG/PG,
-  girls-only, closing date and amount, and shows the sentence each fact came from;
-- new schemes appear in the list with a blue **New · found online · needs verification** badge.
-
-These schemes can show "Condition not met", but never "Potentially eligible", and the app sends the
-student to the official page instead of preparing an application. Nothing is guessed: a fact that isn't
-clearly written on the page is left out.
-
-Setup: add `TAVILY_API_KEY=tvly-...` to `.env` and restart the app. Command line:
-`python3 manage_schemes.py scrape | status | hide <id>`. Found schemes are saved in
-`instance/tavily_schemes.json` (delete this file to start fresh).
-
 ## Run the tests
 
 ```bash
 python tests/test_p3.py            # chatbot, OCR, packet           (11)
 python tests/test_engine_ranker.py # eligibility + BestFit          (11)
 python tests/test_panchayat.py     # dashboard, workflow, security  (20)
-python tests/test_application_submit.py  # submit flow                (5)
-python tests/test_tavily.py              # find schemes online        (7, no internet needed)
+python tests/test_application_submit.py  # submit flow                (4)
 ```
 Every test uses a temporary database and file folder - never `instance/janaseva.db`.
 
@@ -141,8 +120,6 @@ documents are lost on redeploy - fine for a demo, not for real use.
 | `PROCESSING_TARGET_DAYS` | `7` | requests older than this are flagged overdue |
 | `SESSION_COOKIE_SECURE` | `0` | set `1` when served over HTTPS |
 | `LLM_PROVIDER`, `LLM_API_KEY`, `LLM_MODEL` | none | optional chatbot wording |
-| `TAVILY_API_KEY` | none | "Find new schemes online" button |
-| `TAVILY_STORE_PATH` | `instance/tavily_schemes.json` | schemes found online |
 
 ## Project structure and owners
 

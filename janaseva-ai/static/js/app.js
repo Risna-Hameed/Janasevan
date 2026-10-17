@@ -52,7 +52,7 @@
     PAGES.forEach((p) => { $("#" + p).hidden = p !== page; });
     $$(".navbar .nav-link").forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + page));
     const nav = $("#nav"); if (nav.classList.contains("show")) bootstrap.Collapse.getOrCreateInstance(nav).hide();
-    if (page === "discover") { renderFindOnline(); renderBest(); renderSchemes(); }
+    if (page === "discover") { renderBest(); renderSchemes(); }
     if (page === "dashboard") renderDashboard();
     if (page === "apply") renderApply();
     if (page === "benefitiq") renderBenefitIQ();
@@ -124,42 +124,8 @@
   function freshBadge(s) {
     const f = s.freshness || {};
     if (f.level === "test" && s.is_test) return "";   // the separate "Fictional test record" badge already says this
-    const cls = { green: "b-green", amber: "b-amber", red: "b-red", test: "b-test", new: "b-new" }[f.level] || "b-red";
+    const cls = { green: "b-green", amber: "b-amber", red: "b-red", test: "b-test" }[f.level] || "b-red";
     return `<span class="badge-j ${cls}">${esc(I18N.lang === "ml" ? f.label_ml : f.label_en)}</span>`;
-  }
-
-  /* ---------- discover: find new schemes online (Tavily) ---------- */
-  const fmtWhen = (iso) => iso ? new Date(iso).toLocaleString(I18N.lang === "ml" ? "ml-IN" : "en-IN",
-    { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }) : t("find.never");
-  async function renderFindOnline(message) {
-    const box = $("#findOnline");
-    try {
-      const st = await API.foundOnline();
-      const chips = st.found.slice(0, 8).map((f) => `<button type="button" class="upd-chip" data-detail="${esc(f.id)}">
-          <span class="badge-j b-new">${esc(t("find.new"))}</span> ${esc(f.name_en)}${f.deadline ? ` <span class="muted small">· ${esc(t("find.closes"))} ${esc(f.deadline)}</span>` : ""}</button>`).join("");
-      box.innerHTML = `
-        <div class="find-head">
-          <div><strong>${esc(t("find.title"))}</strong>
-            <div class="small muted">${esc(t("find.hint"))} · ${esc(t("find.last"))}: ${esc(fmtWhen(st.last_search))}</div></div>
-          <button type="button" class="btn btn-sm btn-primary-j" id="findBtn" ${st.configured ? "" : "disabled"}>🔎 ${esc(t("find.btn"))}</button>
-        </div>
-        ${st.configured ? "" : `<div class="small text-danger mt-1">${esc(t("find.noKey"))}</div>`}
-        ${message ? `<div class="small mt-2 find-msg">${message}</div>` : ""}
-        ${chips ? `<div class="upd-chips">${chips}</div><div class="small muted mt-1">${esc(t("find.note"))}</div>` : ""}`;
-    } catch (err) { box.innerHTML = ""; }
-  }
-  async function findNewOnline(btn) {
-    btn.disabled = true; btn.textContent = t("find.searching");
-    let msg;
-    try {
-      const r = await API.findNewOnline();
-      msg = r.added.length
-        ? `✓ ${esc(t("find.added").replace("{n}", r.added.length))}`
-        : `${esc(t("find.none"))} (${esc(t("find.known"))}: ${r.already_known})`;
-      if (r.errors.length) msg += `<br><span class="text-danger">${r.errors.map(esc).join("<br>")}</span>`;
-      renderSchemes();
-    } catch (err) { msg = `<span class="text-danger">${esc(err.message)}</span>`; }
-    renderFindOnline(msg);
   }
 
   /* ---------- discover: best for you ---------- */
@@ -228,10 +194,8 @@
         <dt class="col-sm-4">${esc(t("detail.department"))}</dt><dd class="col-sm-8">${esc(s.department)}</dd>
         <dt class="col-sm-4">${esc(t("detail.benefits"))}</dt><dd class="col-sm-8">${esc(s.benefits)}</dd>
         <dt class="col-sm-4">${esc(t("detail.method"))}</dt><dd class="col-sm-8">${esc(s.application_method)}</dd>
-        <dt class="col-sm-4">${esc(t("detail.deadline"))}</dt><dd class="col-sm-8">${esc(s.deadline || t("biq.verify"))}${s.found && s.deadline ? ` <span class="small muted">(${esc(t("find.copied"))})</span>` : ""}</dd>
+        <dt class="col-sm-4">${esc(t("detail.deadline"))}</dt><dd class="col-sm-8">${esc(s.deadline || t("biq.verify"))}</dd>
       </dl>
-      ${s.found && s.found.evidence && s.found.evidence.length ? `<details class="mb-2" open><summary class="small fw-semibold">${esc(t("find.evidence"))}</summary>
-        <ul class="small evidence">${s.found.evidence.map((e) => `<li>“${esc(e)}”</li>`).join("")}</ul></details>` : ""}
       <h3 class="h6">${esc(t("card.conditions"))}</h3><ul>${s.eligibility_rules.map((r) => `<li>${esc(L(r, "description"))}${r.verified ? "" : ` <span class="badge-j b-amber">${esc(t("biq.verify"))}</span>`}</li>`).join("") || `<li>${esc(t("biq.verify"))}</li>`}</ul>
       <h3 class="h6">${esc(t("card.documents"))}</h3><ul>${s.required_documents.map((d) => `<li>${esc(L(d, "name"))}</li>`).join("") || `<li>${esc(t("docs.noList"))}</li>`}</ul>
       ${src ? `<h3 class="h6">${esc(t("chat.sources"))}</h3><ul class="small">${src}</ul>` : ""}
@@ -429,9 +393,7 @@
 
   function showBlockers(r) {
     const icon = { field: "✎", document: "📄", eligibility: "✗" };
-    const action = (b) => b.action === "official"
-      ? (b.url ? `<a class="btn btn-sm btn-outline-j" href="${esc(b.url)}" target="_blank" rel="noopener">${esc(t("find.openOfficial"))} ↗</a>` : "")
-      : b.action === "field"
+    const action = (b) => b.action === "field"
       ? `<button type="button" class="btn btn-sm btn-outline-j" data-fix-field="${esc(b.field)}">${esc(t("submit.fixField"))}</button>`
       : `<button type="button" class="btn btn-sm btn-outline-j" data-open="${esc(state.scheme.id)}">${esc(t(b.action === "document" ? "submit.fixDoc" : "submit.fixElig"))}</button>`;
     step().innerHTML = `
@@ -774,7 +736,6 @@
 
     // delegated clicks for content rendered later
     document.addEventListener("click", async (e) => {
-      if (e.target.closest("#findBtn")) { findNewOnline(e.target.closest("#findBtn")); return; }
       const el = e.target.closest("[data-open],[data-detail],[data-save],[data-action],[data-open-draft],#packetBtn,#useOcr");
       if (!el) return;
       if (el.dataset.action === "open-chat") { openChat(); return; }

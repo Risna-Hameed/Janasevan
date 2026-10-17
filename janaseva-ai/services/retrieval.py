@@ -10,8 +10,6 @@ import re
 from datetime import date
 
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "schemes.json")
-# Schemes found online with Tavily (services/tavily_scraper.py). Set by create_app; None = none.
-TAVILY_PATH = None
 
 # Malayalam / Manglish words mapped to English search terms
 ML_SYNONYMS = {
@@ -28,26 +26,13 @@ STOPWORDS = {"the", "a", "an", "for", "of", "to", "is", "am", "i", "my", "me", "
              "have", "be", "it", "you", "your", "get", "give", "tell", "about", "please", "any", "there"}
 
 
-def _read_json(path, default):
-    try:
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except (OSError, ValueError, TypeError):
-        return default
-
-
-def load_base_schemes():
-    """Only the curated records in data/schemes.json."""
-    return _read_json(DATA_PATH, {}).get("schemes", [])
-
-
 def load_schemes(include_tests=True):
-    """Curated records + schemes found online with Tavily (minus hidden ones). Never crashes on a bad file."""
-    schemes = load_base_schemes()
-    if TAVILY_PATH:
-        found = _read_json(TAVILY_PATH, {})
-        hidden = set(found.get("hidden", []))
-        schemes = schemes + [s for s in found.get("schemes", []) if s.get("id") not in hidden]
+    """Load scheme records. Returns [] instead of crashing if the file is missing or broken."""
+    try:
+        with open(DATA_PATH, encoding="utf-8") as f:
+            schemes = json.load(f).get("schemes", [])
+    except (OSError, ValueError):
+        return []
     return [s for s in schemes if include_tests or not s.get("is_test")]
 
 
@@ -100,10 +85,6 @@ def freshness(scheme, today=None):
     """Source freshness badge: green / amber / red. Drives the trust badge in the UI."""
     if scheme.get("source_status") == "test":
         return {"level": "test", "label_en": "Fictional test record", "label_ml": "സാങ്കൽപ്പിക ടെസ്റ്റ് രേഖ"}
-    if scheme.get("source_status") == "found_online":
-        on = scheme.get("found", {}).get("on", "")
-        return {"level": "new", "label_en": f"New · found online {on} · needs verification",
-                "label_ml": f"പുതിയത് · {on}-ന് ഓൺലൈനിൽ കണ്ടെത്തി · പരിശോധന ആവശ്യമാണ്"}
     lv = scheme.get("last_verified")
     if scheme.get("source_status") != "verified" or not lv:
         return {"level": "red", "label_en": "Needs verification", "label_ml": "പരിശോധന ആവശ്യമാണ്"}

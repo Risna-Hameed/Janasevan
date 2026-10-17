@@ -4,8 +4,6 @@ Run:  python tests/test_panchayat.py      (or: python -m pytest tests/test_panch
 """
 import io
 import os
-import tempfile as _tf
-os.environ.setdefault("TAVILY_STORE_PATH", os.path.join(_tf.mkdtemp(prefix="janaseva_tv_"), "t.json"))  # never the real store
 import shutil
 import sqlite3
 import sys

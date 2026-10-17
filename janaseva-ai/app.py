@@ -17,8 +17,7 @@ from routes.chat_routes import bp as chat_bp                  # P3
 from routes.document_routes import bp as document_bp          # P3
 from routes.recommend_routes import bp as recommend_bp        # P3 (eligibility + BestFit)
 from routes.scheme_routes import bp as scheme_bp              # P1
-from routes.tavily_routes import bp as tavily_bp                # P3 (find new schemes online)
-from services import document_service, tavily_scraper
+from services import document_service
 
 
 def create_app(config=Config):
@@ -26,7 +25,6 @@ def create_app(config=Config):
     app.config.from_object(config)
     app.json.ensure_ascii = False
     init_db(app)
-    tavily_scraper.configure(app.config["TAVILY_STORE_PATH"])
     if app.config.get("SEED_DEMO"):
         from database.db import connect
         from database.seed_panchayat import seed
@@ -37,7 +35,7 @@ def create_app(config=Config):
             finally:
                 conn.close()
 
-    for bp in (scheme_bp, application_bp, chat_bp, document_bp, recommend_bp, tavily_bp):
+    for bp in (scheme_bp, application_bp, chat_bp, document_bp, recommend_bp):
         app.register_blueprint(bp, url_prefix="/api")
     app.register_blueprint(citizen_verification_bp, url_prefix="/api/citizen")
     app.register_blueprint(panchayat_bp, url_prefix="/api/panchayat")

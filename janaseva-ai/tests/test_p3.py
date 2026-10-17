@@ -1,8 +1,6 @@
 """P3 tests. Run from the project root:  python -m pytest tests/test_p3.py  (or: python tests/test_p3.py)"""
 import json
 import os
-import tempfile as _tf
-os.environ.setdefault("TAVILY_STORE_PATH", os.path.join(_tf.mkdtemp(prefix="janaseva_tv_"), "t.json"))  # never the real store
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

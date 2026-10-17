@@ -39,6 +39,17 @@ def label(field, lang="en"):
 def check(scheme, form, provided_items, profile=None):
     """Return {ready, blockers[], warnings[]}. Every blocker says what is wrong and what to do."""
     blockers, warnings, seen = [], [], set()
+    if scheme.get("source_status") == "auto_added":
+        # added by the daily updater: rules were read automatically and the document list is unknown
+        return {"ready": False, "warnings": [], "eligibility_status": "verification_required", "blockers": [{
+            "type": "eligibility", "field": "scheme_rules", "action": "official",
+            "title_en": "New scheme - apply on the official portal",
+            "title_ml": "പുതിയ പദ്ധതി - ഔദ്യോഗിക പോർട്ടലിൽ അപേക്ഷിക്കുക",
+            "detail_en": "This scheme was added automatically from an official notice. Its rules and document list are not "
+                         "confirmed yet, so JANASEVA AI does not prepare an application for it. Open the official notice to apply.",
+            "detail_ml": "ഈ പദ്ധതി ഔദ്യോഗിക അറിയിപ്പിൽ നിന്ന് സ്വയം ചേർത്തതാണ്. നിബന്ധനകളും രേഖകളുടെ പട്ടികയും ഇതുവരെ "
+                         "ഉറപ്പാക്കിയിട്ടില്ല, അതിനാൽ ഇവിടെ അപേക്ഷ തയ്യാറാക്കില്ല. അപേക്ഷിക്കാൻ ഔദ്യോഗിക അറിയിപ്പ് തുറക്കുക.",
+            "url": scheme.get("official_url")}]}
     if not scheme.get("eligibility_rules"):
         # rules and document list not verified yet - we cannot prepare an honest application for this scheme
         return {"ready": False, "warnings": [], "eligibility_status": "verification_required", "blockers": [{

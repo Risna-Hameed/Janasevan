@@ -24,7 +24,7 @@ from database.db import get_db, now
 ROLE_PERMISSIONS = {
     "panchayat_admin": {"view_dashboard", "view_requests", "review_requests", "view_documents", "download_documents",
                         "view_households", "view_sensitive", "edit_households", "manage_surveys", "validate_surveys",
-                        "view_analytics", "manage_users", "view_audit"},
+                        "view_analytics", "manage_users", "view_audit", "manage_scheme_updates"},
     "verification_officer": {"view_dashboard", "view_requests", "review_requests", "view_documents", "download_documents",
                              "view_households", "view_sensitive", "view_analytics"},
     "data_entry": {"view_dashboard", "view_households", "manage_surveys", "view_analytics"},

@@ -297,5 +297,19 @@
   "submit.when": "Submitted on",
   "submit.finalTitle": "Your final application",
   "submit.download": "Download application PDF",
-  "submit.nextStep": "Keep this PDF. Use it when you apply through the official portal or at your Akshaya centre."
+  "submit.nextStep": "Keep this PDF. Use it when you apply through the official portal or at your Akshaya centre.",
+  "upd.auto": "Scheme list updates automatically every day",
+  "upd.manual": "Scheme list updates on request",
+  "upd.last": "Last checked",
+  "upd.next": "Next check",
+  "upd.inList": "schemes in the list",
+  "upd.new": "New",
+  "upd.changed": "Official document changed",
+  "upd.closes": "closes",
+  "upd.none": "No new or changed schemes in the last 30 days.",
+  "upd.note": "New schemes are read automatically from official notices. Confirm the details on the official page before applying.",
+  "upd.autoRead": "read automatically from the notice",
+  "upd.docChanged": "The official document for this scheme changed on",
+  "upd.evidence": "Where these details came from (official notice text)",
+  "upd.openOfficial": "Open official notice"
 }

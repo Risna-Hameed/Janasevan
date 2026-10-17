@@ -92,13 +92,56 @@ Reset never touches student profiles, drafts or saved schemes.
 **Demo files:** `data/samples/sample_income_certificate.png` (matches the demo profile) and
 `sample_income_certificate_mismatch.png` (shows the name/income mismatch alert).
 
+## Daily scheme updates (automatic)
+
+The scheme list keeps itself up to date. While the app is running it checks the official pages
+**once a day at 6 am India time** (and right away if a day was missed), with no button to press:
+
+1. **New schemes.** It reads the official listing pages in `data/scheme_sources.json` (NSP, AICTE,
+   Kerala Minority Welfare, Kerala DCE scholarships, e-Grantz) and finds links that look like schemes.
+   Anything not already in the list is **published on the site straight away** with a blue **New** badge.
+2. **Facts from the notice.** It opens each new notice (web page or PDF) and reads only what is written
+   there: income limit, minimum marks, UG/PG, girls-only, closing date and the amount sentence. The exact
+   sentence each fact came from is shown under "Where these details came from". If a fact is not clearly
+   written, it is left out, never guessed.
+3. **Changed documents.** Every official document listed for an existing scheme is re-read. If it changed,
+   the scheme shows "Official document changed on … - recheck" until an official marks it re-read.
+4. **Removed schemes.** A scheme that disappears from its source page for 3 days is taken off the site.
+
+Honesty limits: auto-read rules are stored as *unverified*, so an auto-added scheme can show "Condition
+not met" or "Verification required", but **never "Potentially eligible"**. JANASEVA AI does not prepare an
+application for it; the student is sent to the official notice instead. Amounts read from notices are shown
+as text, but they are not used for ranking.
+
+Politeness: the updater fetches only allow-listed government domains, obeys robots.txt, waits 2 s between
+requests, never logs in and never submits anything.
+
+**See it working offline (for the demo):** a fictional source, *Demo Department of Student Welfare*, is
+included (`data/samples/demo_feed/`). On the first start it adds two clearly fictional schemes. You can
+also run it by hand:
+
+```bash
+python manage_schemes.py update demo_feed   # offline demo source only
+python manage_schemes.py update             # every official source (needs internet)
+python manage_schemes.py status
+python manage_schemes.py hide <scheme_id>   # take a wrongly added scheme off the site
+```
+Officials: sign in as `thanal.admin` → **Scheme Updates** to see what was added, press **Check now**,
+hide a wrong entry, or mark a changed document as re-read. Students see a "Scheme list updates
+automatically every day" strip at the top of **Discover**.
+
+Before the real demo, open each URL in `data/scheme_sources.json` and confirm it still lists schemes.
+Sites built entirely with JavaScript (links drawn after the page loads) show few or no links to a
+simple reader. That source is then reported as "0 new", not as an error.
+
 ## Run the tests
 
 ```bash
 python tests/test_p3.py            # chatbot, OCR, packet           (11)
 python tests/test_engine_ranker.py # eligibility + BestFit          (11)
 python tests/test_panchayat.py     # dashboard, workflow, security  (20)
-python tests/test_application_submit.py  # submit flow                (4)
+python tests/test_application_submit.py  # submit flow                (5)
+python tests/test_scheme_updater.py      # daily scheme updates       (9)
 ```
 Every test uses a temporary database and file folder - never `instance/janaseva.db`.
 
@@ -120,6 +163,9 @@ documents are lost on redeploy - fine for a demo, not for real use.
 | `PROCESSING_TARGET_DAYS` | `7` | requests older than this are flagged overdue |
 | `SESSION_COOKIE_SECURE` | `0` | set `1` when served over HTTPS |
 | `LLM_PROVIDER`, `LLM_API_KEY`, `LLM_MODEL` | none | optional chatbot wording |
+| `SCHEME_AUTO_UPDATE` | `1` | daily automatic scheme update while the app runs (`0` = off) |
+| `SCHEME_UPDATE_HOUR_IST` | `6` | hour of the daily check, India time |
+| `SCHEME_UPDATE_DIR` | `instance/scheme_updates` | auto-added schemes, document hashes, run log |
 
 ## Project structure and owners
 
@@ -206,6 +252,9 @@ referred: the panchayat cannot record them as verified. **Verification never app
 
 - Only one real scheme (Central Sector Scheme) is fully verified; others are marked
   "Needs verification" until the team checks the official pages (see `data/VERIFICATION_CHECKLIST.csv`).
+- Auto-added schemes are read by simple text patterns from official notices. They can miss or misread
+  a condition, so they are labelled "New · added automatically · confirm on official page", are never shown as
+  "Potentially eligible" and cannot be applied for inside the app. Malayalam names are not translated.
 - `[TEST]` schemes are fictional and exist only to demonstrate pass / fail cases.
 - No approval probability: no validated historical outcome data exists.
 - OCR supports income certificates only; reading text does not prove a document is genuine.

@@ -1,6 +1,9 @@
 """P3 tests. Run from the project root:  python -m pytest tests/test_p3.py  (or: python tests/test_p3.py)"""
 import json
 import os
+import tempfile as _tf
+os.environ.setdefault("SCHEME_AUTO_UPDATE", "0")          # no background fetching in tests
+os.environ.setdefault("SCHEME_UPDATE_DIR", _tf.mkdtemp(prefix="janaseva_updates_"))
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

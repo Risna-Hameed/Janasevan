@@ -121,3 +121,17 @@ fieldset.card-j legend { float: none; width: auto; font-size: 1.05rem; font-weig
 .submitted-box { display: flex; gap: 1rem; align-items: center; background: var(--green-bg); color: var(--green); border: 2px solid var(--green); border-radius: 14px; padding: 1rem 1.2rem; }
 .submitted-tick { width: 3rem; height: 3rem; border-radius: 50%; background: var(--green); color: #fff; display: grid; place-items: center; font-size: 1.6rem; font-weight: 700; flex: 0 0 auto; }
 @media (max-width: 576px) { .blocker { flex-wrap: wrap; } .pdf-frame { height: 60vh; } }
+
+/* daily scheme updates */
+.b-new { background: #e3f1fb; color: #0b5c8f; }
+.updates-strip { background: #fff; border: 1px solid #dde5e1; border-radius: 10px; padding: .55rem .8rem; margin: .4rem 0 1rem; }
+.updates-strip:empty { display: none; }
+.upd-head { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .6rem; }
+.upd-dot { width: .6rem; height: .6rem; border-radius: 50%; background: #2e8b57; box-shadow: 0 0 0 3px #2e8b5726; }
+.upd-dot.busy { background: #d79a1c; animation: updpulse 1s infinite alternate; }
+@keyframes updpulse { to { opacity: .35; } }
+.upd-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .45rem; }
+.upd-chip { border: 1px solid #dde5e1; background: #f7faf8; border-radius: 99px; padding: .2rem .65rem; font-size: .85rem; text-align: left; }
+.upd-chip:hover { background: #eef5f1; }
+.evidence li { color: #3b4a52; font-style: italic; }
+@media (prefers-reduced-motion: reduce) { .upd-dot.busy { animation: none; } }

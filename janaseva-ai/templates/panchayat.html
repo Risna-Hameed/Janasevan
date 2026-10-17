@@ -55,6 +55,7 @@
       <a href="#analytics" data-nav="analytics" data-perm="view_analytics"><span aria-hidden="true">▤</span> Ward Analytics</a>
       <a href="#history" data-nav="history" data-perm="view_requests"><span aria-hidden="true">↺</span> Verification History</a>
       <a href="#notifications" data-nav="notifications"><span aria-hidden="true">🔔</span> Notifications <b class="nav-count" id="navNotif"></b></a>
+      <a href="#schemes" data-nav="schemes" data-perm="manage_scheme_updates"><span aria-hidden="true">⟳</span> Scheme Updates</a>
       <a href="#admin" data-nav="admin" data-perm="manage_users"><span aria-hidden="true">⚙</span> Administration</a>
     </nav>
     <div class="side-foot small">Prototype · fictional demo data · not a government system</div>
@@ -165,6 +166,21 @@
         <div class="page-head d-flex justify-content-between align-items-center"><h1>Notifications</h1>
           <button class="btn btn-sm btn-outline-pj" id="readAllBtn">Mark all as read</button></div>
         <div class="panel" id="ntList"></div>
+      </section>
+
+      <!-- SCHEME UPDATES -->
+      <section data-view="schemes" hidden>
+        <div class="page-head d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div><h1>Scheme Updates</h1><p class="muted small mb-0">The scheme list updates itself once a day from official pages. New schemes go live straight away, labelled "New".
+            Hide one here if it was picked up by mistake.</p></div>
+          <button class="btn btn-sm btn-pj" id="suRunBtn">⟳ Check now</button></div>
+        <div class="stat-grid mb-3" id="suStats"></div>
+        <div class="row g-3">
+          <div class="col-xl-8"><div class="panel"><h2>Added automatically</h2><div id="suAdded" class="table-responsive"></div></div>
+            <div class="panel"><h2>Official documents that changed</h2><div id="suChanged" class="table-responsive"></div></div></div>
+          <div class="col-xl-4"><div class="panel"><h2>Sources checked</h2><div id="suSources" class="small"></div></div>
+            <div class="panel"><h2>Recent runs</h2><div id="suRuns" class="small"></div></div></div>
+        </div>
       </section>
 
       <!-- ADMIN -->

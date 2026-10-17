@@ -17,7 +17,8 @@ from routes.chat_routes import bp as chat_bp                  # P3
 from routes.document_routes import bp as document_bp          # P3
 from routes.recommend_routes import bp as recommend_bp        # P3 (eligibility + BestFit)
 from routes.scheme_routes import bp as scheme_bp              # P1
-from services import document_service
+from routes.scheme_update_routes import bp as scheme_update_bp, admin_bp as scheme_update_admin_bp
+from services import document_service, scheme_updater
 
 
 def create_app(config=Config):
@@ -25,6 +26,7 @@ def create_app(config=Config):
     app.config.from_object(config)
     app.json.ensure_ascii = False
     init_db(app)
+    scheme_updater.configure(app.config["SCHEME_UPDATE_DIR"])
     if app.config.get("SEED_DEMO"):
         from database.db import connect
         from database.seed_panchayat import seed
@@ -41,6 +43,13 @@ def create_app(config=Config):
     app.register_blueprint(panchayat_bp, url_prefix="/api/panchayat")
     app.register_blueprint(panchayat_records_bp, url_prefix="/api/panchayat")
     app.register_blueprint(panchayat_page_bp)
+    app.register_blueprint(scheme_update_bp, url_prefix="/api")
+    app.register_blueprint(scheme_update_admin_bp, url_prefix="/api/panchayat")
+
+    # Daily scheme update. With the debug reloader only the child process (WERKZEUG_RUN_MAIN) runs it.
+    if app.config.get("SCHEME_AUTO_UPDATE") and not app.testing and \
+            (os.environ.get("FLASK_DEBUG") != "1" or os.environ.get("WERKZEUG_RUN_MAIN") == "true"):
+        scheme_updater.start_scheduler(app.config["SCHEME_UPDATE_HOUR_IST"], app.logger)
 
     @app.after_request
     def security_headers(resp):

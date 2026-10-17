@@ -1,5 +1,8 @@
 """Tests for the eligibility engine and BestFit ranker.  Run: python tests/test_engine_ranker.py"""
 import os
+import tempfile as _tf
+os.environ.setdefault("SCHEME_AUTO_UPDATE", "0")          # no background fetching in tests
+os.environ.setdefault("SCHEME_UPDATE_DIR", _tf.mkdtemp(prefix="janaseva_updates_"))
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

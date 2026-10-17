@@ -10,6 +10,8 @@ import re
 from datetime import date
 
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "schemes.json")
+# Schemes added by the daily updater (services/scheme_updater.py). Set by create_app; None = no updates.
+AUTO_PATH = None
 
 # Malayalam / Manglish words mapped to English search terms
 ML_SYNONYMS = {
@@ -26,13 +28,33 @@ STOPWORDS = {"the", "a", "an", "for", "of", "to", "is", "am", "i", "my", "me", "
              "have", "be", "it", "you", "your", "get", "give", "tell", "about", "please", "any", "there"}
 
 
-def load_schemes(include_tests=True):
-    """Load scheme records. Returns [] instead of crashing if the file is missing or broken."""
+def _read_json(path, default):
     try:
-        with open(DATA_PATH, encoding="utf-8") as f:
-            schemes = json.load(f).get("schemes", [])
-    except (OSError, ValueError):
-        return []
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError, TypeError):
+        return default
+
+
+def load_base_schemes():
+    """Only the curated records in data/schemes.json."""
+    return _read_json(DATA_PATH, {}).get("schemes", [])
+
+
+def load_schemes(include_tests=True):
+    """Curated records + schemes added by the daily updater (minus any an official hid).
+    A curated scheme whose official document changed carries 'source_update'. Never crashes on a bad file."""
+    schemes = load_base_schemes()
+    if AUTO_PATH:
+        auto = _read_json(AUTO_PATH, {})
+        actions = _read_json(os.path.join(os.path.dirname(AUTO_PATH), "admin_actions.json"), {})
+        hidden, dismissed = set(actions.get("hidden", [])), actions.get("dismissed", {})
+        changes = auto.get("doc_changes", {})
+        schemes = [dict(s, source_update=changes[s["id"]])
+                   if s.get("id") in changes and dismissed.get(s["id"]) != changes[s["id"]].get("changed_on") else s
+                   for s in schemes]
+        schemes += [s for s in auto.get("schemes", [])
+                    if s.get("id") not in hidden and not s.get("auto", {}).get("no_longer_listed")]
     return [s for s in schemes if include_tests or not s.get("is_test")]
 
 
@@ -85,6 +107,13 @@ def freshness(scheme, today=None):
     """Source freshness badge: green / amber / red. Drives the trust badge in the UI."""
     if scheme.get("source_status") == "test":
         return {"level": "test", "label_en": "Fictional test record", "label_ml": "സാങ്കൽപ്പിക ടെസ്റ്റ് രേഖ"}
+    if scheme.get("source_status") == "auto_added":
+        added = scheme.get("auto", {}).get("added_on", "")
+        return {"level": "new", "label_en": f"New · added automatically {added} · confirm on official page",
+                "label_ml": f"പുതിയത് · {added}-ന് സ്വയം ചേർത്തത് · ഔദ്യോഗിക പേജിൽ ഉറപ്പാക്കുക"}
+    if scheme.get("source_update"):
+        return {"level": "amber", "label_en": f"Official document changed on {scheme['source_update']['changed_on']} - recheck",
+                "label_ml": f"{scheme['source_update']['changed_on']}-ന് ഔദ്യോഗിക രേഖ മാറി - വീണ്ടും പരിശോധിക്കുക"}
     lv = scheme.get("last_verified")
     if scheme.get("source_status") != "verified" or not lv:
         return {"level": "red", "label_en": "Needs verification", "label_ml": "പരിശോധന ആവശ്യമാണ്"}

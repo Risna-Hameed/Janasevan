@@ -1,6 +1,9 @@
 """Application submit flow: check -> preview -> change request -> submit -> final PDF.
 Uses a temporary database.  Run: python tests/test_application_submit.py"""
 import os
+import tempfile as _tf
+os.environ.setdefault("SCHEME_AUTO_UPDATE", "0")          # no background fetching in tests
+os.environ.setdefault("SCHEME_UPDATE_DIR", _tf.mkdtemp(prefix="janaseva_updates_"))
 import shutil
 import sys
 import tempfile

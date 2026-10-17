@@ -41,3 +41,8 @@ Config.SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "0") == "
 Config.PERMANENT_SESSION_LIFETIME = 8 * 60 * 60                                      # official sessions: 8 hours
 Config.PROCESSING_TARGET_DAYS = int(os.environ.get("PROCESSING_TARGET_DAYS", "7"))
 Config.SEED_DEMO = os.environ.get("SEED_DEMO", "1") == "1"                            # fictional demo data on first run
+
+# Daily scheme updater (services/scheme_updater.py): reads official pages once a day and adds new schemes.
+Config.SCHEME_AUTO_UPDATE = os.environ.get("SCHEME_AUTO_UPDATE", "1") == "1"
+Config.SCHEME_UPDATE_HOUR_IST = int(os.environ.get("SCHEME_UPDATE_HOUR_IST", "6"))       # 6 am India time
+Config.SCHEME_UPDATE_DIR = os.environ.get("SCHEME_UPDATE_DIR", os.path.join(BASE_DIR, "instance", "scheme_updates"))

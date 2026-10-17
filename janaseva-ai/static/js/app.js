@@ -52,7 +52,7 @@
     PAGES.forEach((p) => { $("#" + p).hidden = p !== page; });
     $$(".navbar .nav-link").forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + page));
     const nav = $("#nav"); if (nav.classList.contains("show")) bootstrap.Collapse.getOrCreateInstance(nav).hide();
-    if (page === "discover") { renderBest(); renderSchemes(); }
+    if (page === "discover") { renderUpdates(); renderBest(); renderSchemes(); }
     if (page === "dashboard") renderDashboard();
     if (page === "apply") renderApply();
     if (page === "benefitiq") renderBenefitIQ();
@@ -124,8 +124,30 @@
   function freshBadge(s) {
     const f = s.freshness || {};
     if (f.level === "test" && s.is_test) return "";   // the separate "Fictional test record" badge already says this
-    const cls = { green: "b-green", amber: "b-amber", red: "b-red", test: "b-test" }[f.level] || "b-red";
+    const cls = { green: "b-green", amber: "b-amber", red: "b-red", test: "b-test", new: "b-new" }[f.level] || "b-red";
     return `<span class="badge-j ${cls}">${esc(I18N.lang === "ml" ? f.label_ml : f.label_en)}</span>`;
+  }
+
+  /* ---------- discover: daily scheme updates ---------- */
+  const fmtWhen = (iso) => iso ? new Date(iso).toLocaleString(I18N.lang === "ml" ? "ml-IN" : "en-IN",
+    { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" }) : "—";
+  async function renderUpdates() {
+    const box = $("#updatesStrip");
+    try {
+      const u = await API.schemeUpdates();
+      const name = (x) => (I18N.lang === "ml" && x.name_ml) ? x.name_ml : x.name_en;
+      const chips = u.new_schemes.slice(0, 6).map((n) => `<button type="button" class="upd-chip" data-detail="${esc(n.id)}">
+          <span class="badge-j b-new">${esc(t("upd.new"))}</span> ${esc(n.name_en)}${n.deadline ? ` <span class="muted small">· ${esc(t("upd.closes"))} ${esc(n.deadline)}</span>` : ""}</button>`).join("");
+      const changed = u.changed_schemes.map((c) => `<button type="button" class="upd-chip" data-detail="${esc(c.id)}">
+          <span class="badge-j b-amber">${esc(t("upd.changed"))}</span> ${esc(name(c))} <span class="muted small">· ${esc(c.changed_on)}</span></button>`).join("");
+      box.innerHTML = `
+        <div class="upd-head"><span class="upd-dot ${u.running ? "busy" : ""}" aria-hidden="true"></span>
+          <strong>${esc(t(u.auto_update_on ? "upd.auto" : "upd.manual"))}</strong>
+          <span class="muted small">${esc(t("upd.last"))}: ${esc(fmtWhen(u.last_run))} · ${esc(t("upd.next"))}: ${esc(fmtWhen(u.next_run))}
+          · ${u.catalog_size} ${esc(t("upd.inList"))}</span></div>
+        ${chips || changed ? `<div class="upd-chips">${chips}${changed}</div>` : `<div class="small muted">${esc(t("upd.none"))}</div>`}
+        ${chips ? `<div class="small muted mt-1">${esc(t("upd.note"))}</div>` : ""}`;
+    } catch (err) { box.innerHTML = ""; }
   }
 
   /* ---------- discover: best for you ---------- */
@@ -194,8 +216,11 @@
         <dt class="col-sm-4">${esc(t("detail.department"))}</dt><dd class="col-sm-8">${esc(s.department)}</dd>
         <dt class="col-sm-4">${esc(t("detail.benefits"))}</dt><dd class="col-sm-8">${esc(s.benefits)}</dd>
         <dt class="col-sm-4">${esc(t("detail.method"))}</dt><dd class="col-sm-8">${esc(s.application_method)}</dd>
-        <dt class="col-sm-4">${esc(t("detail.deadline"))}</dt><dd class="col-sm-8">${esc(s.deadline || t("biq.verify"))}</dd>
+        <dt class="col-sm-4">${esc(t("detail.deadline"))}</dt><dd class="col-sm-8">${esc(s.deadline || t("biq.verify"))}${s.auto && s.deadline ? ` <span class="small muted">(${esc(t("upd.autoRead"))})</span>` : ""}</dd>
       </dl>
+      ${s.source_update ? `<div class="warn-box mb-2 small">⚠ ${esc(t("upd.docChanged"))} ${esc(s.source_update.changed_on)}${s.source_update.url ? ` — <a href="${esc(s.source_update.url)}" target="_blank" rel="noopener">${esc(t("card.source"))} ↗</a>` : ""}</div>` : ""}
+      ${s.auto && s.auto.evidence && s.auto.evidence.length ? `<details class="mb-2"><summary class="small fw-semibold">${esc(t("upd.evidence"))}</summary>
+        <ul class="small evidence">${s.auto.evidence.map((e) => `<li>“${esc(e)}”</li>`).join("")}</ul></details>` : ""}
       <h3 class="h6">${esc(t("card.conditions"))}</h3><ul>${s.eligibility_rules.map((r) => `<li>${esc(L(r, "description"))}${r.verified ? "" : ` <span class="badge-j b-amber">${esc(t("biq.verify"))}</span>`}</li>`).join("") || `<li>${esc(t("biq.verify"))}</li>`}</ul>
       <h3 class="h6">${esc(t("card.documents"))}</h3><ul>${s.required_documents.map((d) => `<li>${esc(L(d, "name"))}</li>`).join("") || `<li>${esc(t("docs.noList"))}</li>`}</ul>
       ${src ? `<h3 class="h6">${esc(t("chat.sources"))}</h3><ul class="small">${src}</ul>` : ""}
@@ -393,7 +418,9 @@
 
   function showBlockers(r) {
     const icon = { field: "✎", document: "📄", eligibility: "✗" };
-    const action = (b) => b.action === "field"
+    const action = (b) => b.action === "official"
+      ? (b.url ? `<a class="btn btn-sm btn-outline-j" href="${esc(b.url)}" target="_blank" rel="noopener">${esc(t("upd.openOfficial"))} ↗</a>` : "")
+      : b.action === "field"
       ? `<button type="button" class="btn btn-sm btn-outline-j" data-fix-field="${esc(b.field)}">${esc(t("submit.fixField"))}</button>`
       : `<button type="button" class="btn btn-sm btn-outline-j" data-open="${esc(state.scheme.id)}">${esc(t(b.action === "document" ? "submit.fixDoc" : "submit.fixElig"))}</button>`;
     step().innerHTML = `

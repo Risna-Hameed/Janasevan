@@ -82,7 +82,8 @@
 
   /* ---------- router ---------- */
   const VIEWS = { overview: renderOverview, requests: renderRequests, households: renderHouseholds, surveys: renderSurveys,
-                  analytics: renderAnalytics, history: renderHistory, notifications: renderNotifications, admin: renderAdmin };
+                  analytics: renderAnalytics, history: renderHistory, notifications: renderNotifications, admin: renderAdmin,
+                  schemes: renderSchemeUpdates };
   function route() {
     if (!S.me) return;
     let view = location.hash.slice(1) || "overview";
@@ -541,6 +542,46 @@
   }
 
   /* ---------- administration ---------- */
+  /* ---------- scheme updates (daily automatic catalog refresh) ---------- */
+  let suTimer = null;
+  async function renderSchemeUpdates() {
+    clearTimeout(suTimer);
+    loading($("#suAdded"));
+    try {
+      const st = await api("GET", "/api/panchayat/scheme-updates");
+      const last = st.runs[0];
+      const visible = st.auto_added.filter((a) => !a.hidden && !a.no_longer_listed).length;
+      const openChanges = Object.values(st.doc_changes).filter((c) => !c.dismissed).length;
+      $("#suStats").innerHTML = [
+        [st.running ? "Running…" : fmtDate(st.last_run), "Last check", st.running ? "warn" : ""],
+        [fmtDate(st.next_run), "Next automatic check", "info"],
+        [visible, "Auto-added schemes live", ""],
+        [openChanges, "Changed documents to re-read", openChanges ? "warn" : ""],
+        [last ? last.errors.length : 0, "Errors in last run", last && last.errors.length ? "bad" : ""],
+      ].map(([n, l, c]) => `<div class="stat ${c}"><div class="n">${esc(String(n))}</div><div class="l">${esc(l)}</div></div>`).join("");
+      $("#suRunBtn").disabled = st.running;
+      $("#suAdded").innerHTML = st.auto_added.length ? `<table class="table table-pj table-sm"><thead><tr><th>Scheme</th><th>Added</th><th>Source</th><th>Rules read</th><th>Closes</th><th>Status</th><th></th></tr></thead><tbody>
+        ${st.auto_added.slice().reverse().map((a) => `<tr><td><a href="${esc(a.url.startsWith("file:") ? "#schemes" : a.url)}" ${a.url.startsWith("file:") ? "" : 'target="_blank" rel="noopener"'}>${esc(a.name_en)}</a>${a.is_demo ? ' <span class="badge-s s-draft">demo</span>' : ""}</td>
+          <td class="small">${fmtDay(a.added_on)}</td><td class="small">${esc(a.source || "")}</td><td>${a.rules_read}</td><td class="small">${esc(a.deadline || "—")}</td>
+          <td>${a.hidden ? badge("cancelled", "hidden") : a.no_longer_listed ? badge("referred", "no longer listed") : badge("verified", "live")}</td>
+          <td><button class="btn btn-sm btn-link ${a.hidden ? "" : "text-danger"}" data-su-hide="${esc(a.id)}" data-to="${a.hidden ? 0 : 1}">${a.hidden ? "Show" : "Hide"}</button></td></tr>`).join("")}</tbody></table>`
+        : '<div class="empty">Nothing added yet. The first check runs automatically, or press "Check now".</div>';
+      const ch = Object.entries(st.doc_changes);
+      $("#suChanged").innerHTML = ch.length ? `<table class="table table-pj table-sm"><thead><tr><th>Scheme</th><th>Changed on</th><th>Document</th><th></th></tr></thead><tbody>
+        ${ch.map(([id, c]) => `<tr><td class="mono small">${esc(id)}</td><td class="small">${fmtDay(c.changed_on)}</td>
+          <td class="small"><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title || "open")}</a></td>
+          <td>${c.dismissed ? badge("verified", "re-read") : `<button class="btn btn-sm btn-link" data-su-recheck="${esc(id)}">Mark re-read</button>`}</td></tr>`).join("")}</tbody></table>`
+        : '<div class="empty">No official document has changed since it was first checked.</div>';
+      const srcState = Object.fromEntries((last ? last.sources : []).map((s) => [s.id, s]));
+      $("#suSources").innerHTML = st.sources.map((s) => { const r = srcState[s.id];
+        return `<p class="mb-2"><strong>${esc(s.name)}</strong> ${!s.enabled ? badge("cancelled", "off") : !r ? "" : r.ok ? badge("verified", `${r.new} new`) : badge("unsuccessful", "not reachable")}
+          <br><span class="muted mono">${esc(s.url.replace(/^file:/, "local demo: "))}</span>${r && r.error ? `<br><span class="text-danger">${esc(r.error)}</span>` : ""}</p>`; }).join("");
+      $("#suRuns").innerHTML = st.runs.length ? st.runs.map((r) => `<p class="mb-1">${fmtDate(r.finished)} · <strong>${r.added.length}</strong> new · ${r.changed.length} changed · ${r.errors.length} errors</p>`).join("")
+        : '<p class="muted">No runs yet.</p>';
+      if (st.running) suTimer = setTimeout(() => { if (location.hash === "#schemes") renderSchemeUpdates(); }, 4000);
+    } catch (err) { $("#suAdded").innerHTML = `<div class="alert alert-danger">${esc(err.message)}</div>`; }
+  }
+
   async function renderAdmin() {
     loading($("#adOfficials"));
     try {
@@ -590,6 +631,17 @@
     $("#newOfficialBtn").addEventListener("click", newOfficial);
     $("#readAllBtn").addEventListener("click", async () => { await api("POST", "/api/panchayat/notifications/read-all"); refreshCounters(); renderNotifications(); });
     document.addEventListener("click", async (e) => {
+      const su = e.target.closest("[data-su-hide],[data-su-recheck],#suRunBtn");
+      if (su) {
+        try {
+          if (su.id === "suRunBtn") { su.disabled = true; const r = await api("POST", "/api/panchayat/scheme-updates/run"); toast(r.message, "ok"); }
+          else if (su.dataset.suHide) { await api("POST", `/api/panchayat/scheme-updates/${encodeURIComponent(su.dataset.suHide)}/hide`, { hidden: su.dataset.to === "1" });
+                                        toast(su.dataset.to === "1" ? "Hidden from the student site." : "Shown on the student site again.", "ok"); }
+          else { await api("POST", `/api/panchayat/scheme-updates/${encodeURIComponent(su.dataset.suRecheck)}/rechecked`); toast("Marked as re-read.", "ok"); }
+        } catch (err) { toast(err.message, "err"); }
+        renderSchemeUpdates();
+        return;
+      }
       const el = e.target.closest("[data-open-req],[data-open-hh],[data-open-sv],[data-wards],[data-active]");
       if (!el) return;
       e.preventDefault();

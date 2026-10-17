@@ -104,3 +104,12 @@ a syntax check, but layout and click-through should be checked once on a laptop.
   synchronisation and a shared rate limiter are designed for but not built.
 - **OCR for paper survey forms** is not implemented (the data model supports proposed vs validated values).
 - **PDF documents** are previewed but not OCR-read by the AI pre-check.
+
+## Daily scheme updates (added)
+
+- `services/scheme_updater.py`: a background thread, started by `create_app`, runs once a day (06:00 IST, or straight away if a day was missed). It reads the allow-listed official listing pages (`data/scheme_sources.json`), publishes new schemes immediately with the label "New · added automatically", reads the facts written in each notice (HTML or PDF via pypdf) and keeps the source sentence as evidence. It re-hashes the official documents of the curated schemes to flag changes, and removes auto-added schemes no longer listed for 3 runs. robots.txt, a 2 s gap between requests, a size cap, a timeout, and one run at a time (thread lock plus a lock file shared across processes).
+- Storage: `instance/scheme_updates/` (auto_schemes.json, updater_state.json, admin_actions.json). There is no DB migration. `retrieval.load_schemes()` merges the auto-added records, so search, the chatbot, eligibility and BestFit include them automatically.
+- Honesty: auto-read rules have `verified: false`, so the engine never returns `potentially_eligible` for them. `application_submission.check` sends the student to the official notice. `benefit_value_inr` stays null, so ranking never uses an amount that wasn't verified.
+- UI: an updates strip on Discover, a "New" badge, an "Official document changed" notice, and an evidence list in the details view. Panchayat admin has a **Scheme Updates** section (Check now, Hide/Show, Mark re-read), and every action goes into the audit log.
+- CLI: `manage_schemes.py update [source] | status | hide | show`.
+- Tests: `tests/test_scheme_updater.py` (9). It needs no internet: it uses the fictional demo feed and a fake fetcher.

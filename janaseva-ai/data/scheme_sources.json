@@ -1,0 +1,24 @@
+{
+  "_readme": "Pages the daily updater reads. 'listing' pages are scanned for links to new schemes; every official document listed in a scheme's 'sources' in schemes.json is also watched for changes. Only these domains are ever fetched. The updater obeys robots.txt, waits between requests and never logs in or submits anything. URLs come from the official_url fields in schemes.json - confirm each still lists schemes before the demo.",
+  "user_agent": "JanasevaAI-SchemeUpdater/1.0 (student hackathon project; reads public pages once a day)",
+  "request_gap_seconds": 2,
+  "timeout_seconds": 15,
+  "max_bytes": 4000000,
+  "allowed_domains": ["scholarships.gov.in", "aicte-india.org", "aicte.gov.in", "minoritywelfare.kerala.gov.in",
+                      "dcescholarship.kerala.gov.in", "egrantz.kerala.gov.in", "nitkkr.ac.in", "megeducation.gov.in",
+                      "youthpower.in", "knmgovtcollege.ac.in"],
+  "sources": [
+    {"id": "nsp", "name": "National Scholarship Portal", "url": "https://scholarships.gov.in", "kind": "listing",
+     "state": "All India", "department": "National Scholarship Portal (Government of India)", "enabled": true},
+    {"id": "aicte", "name": "AICTE", "url": "https://www.aicte-india.org", "kind": "listing",
+     "state": "All India", "department": "All India Council for Technical Education", "enabled": true},
+    {"id": "kerala_minority", "name": "Kerala Minority Welfare Department", "url": "https://www.minoritywelfare.kerala.gov.in",
+     "kind": "listing", "state": "Kerala", "department": "Minority Welfare Department, Government of Kerala", "enabled": true},
+    {"id": "kerala_dce", "name": "Kerala Collegiate Education scholarships", "url": "https://www.dcescholarship.kerala.gov.in",
+     "kind": "listing", "state": "Kerala", "department": "Directorate of Collegiate Education, Kerala", "enabled": true},
+    {"id": "kerala_egrantz", "name": "e-Grantz Kerala", "url": "https://www.egrantz.kerala.gov.in", "kind": "listing",
+     "state": "Kerala", "department": "Government of Kerala (e-Grantz)", "enabled": true},
+    {"id": "demo_feed", "name": "Demo Department of Student Welfare (fictional)", "url": "file:data/samples/demo_feed/index.html",
+     "kind": "listing", "state": "Kerala", "department": "Demo Department of Student Welfare (fictional)", "enabled": true, "is_demo": true}
+  ]
+}

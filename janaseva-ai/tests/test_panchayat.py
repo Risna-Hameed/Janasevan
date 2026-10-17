@@ -4,6 +4,9 @@ Run:  python tests/test_panchayat.py      (or: python -m pytest tests/test_panch
 """
 import io
 import os
+import tempfile as _tf
+os.environ.setdefault("SCHEME_AUTO_UPDATE", "0")          # no background fetching in tests
+os.environ.setdefault("SCHEME_UPDATE_DIR", _tf.mkdtemp(prefix="janaseva_updates_"))
 import shutil
 import sqlite3
 import sys
